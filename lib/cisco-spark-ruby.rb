@@ -7,11 +7,10 @@ module Spark
     autoload :Rooms, "rooms"
     autoload :Team, "team"
     autoload :Teams, "teams"
+    autoload :Person, "person"
+    autoload :People, "people"
     @@token = nil
     @@logger = nil
-    def initialize
-        puts "derrrp"
-    end
     class << self
         def Configure(_opts = {})
             @@token = _opts[:token] || ENV['SPARK_TOKEN']
