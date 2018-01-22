@@ -17,14 +17,6 @@ module Spark
             @teams.each { |r| yield r }
         end
         class << self
-            def Get(id)
-                rsp = Spark::rest('GET',"/teams/#{id}")
-                if rsp.ok
-                    team = Spark::Team.new(JSON.parse(rsp.body))
-                    return team
-                end
-                return nil
-            end
             def List(params = {})
                 out = Spark::Teams.new()
                 rsp = Spark::rest('GET','/teams',{:params => params})

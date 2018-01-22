@@ -11,5 +11,19 @@ module Spark
         def set_name(name)
             return self.update({:name => name})
         end
+        def [](key)
+            return nil unless respond_to?(key)
+            public_send(key)
+        end
+        class << self
+            def Get(id)
+                res = Spark::rest('GET',"/teams/#{id}")
+                if res.ok
+                    team = Spark::Team.new(JSON.parse(res.body))
+                    return team
+                end
+                return nil
+            end
+        end
     end
 end

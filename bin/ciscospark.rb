@@ -22,11 +22,29 @@ parser = OptionParser.new do |opts|
     opts.on('-h','--help', 'Show Help') do
         options[:help] = 'root'
     end
+    opts.subcommand 'team' do |subcommand|
+        options[:entity] = 'team'
+        subcommand.on('-h','--help', 'Show Help') do
+            options[:help] = 'team'
+        end
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-h','--help', 'Show Help') do
+                options[:help] = 'room_get'
+            end
+            action.on('-i', '--id id','id') do |o|
+               options[:id] = o 
+            end
+        end
+    end
     opts.subcommand 'room' do |subcommand|
+        options[:entity] = 'room'
         subcommand.on('-h','--help', 'Show Help') do
             options[:help] = 'room'
         end
-        options[:entity] = 'room'
         subcommand.subcommand 'list' do |action|
             options[:action] = 'list'
             action.on('-h','--help', 'Show Help') do
@@ -110,4 +128,16 @@ when 'room'
         room = Spark::Room::Get(options[:id])
         room.set_title(options[:title])
     end
+when 'team'
+    case options[:action]
+    when 'list'
+        teams = Spark::Teams::List()
+        teams.each { |t| printf "%-80s %s\n", t.id, t.name }
+    when 'get'
+        raise "Specify team ID with --id" unless options[:id]
+        team = Spark::Team::Get(options[:id])
+        team.instance_variables.each { |k| printf "%-25s %s\n", k,team[k.to_s.sub('@','')] }
+    end
+    #TODO: create, update, delete
+    
 end
