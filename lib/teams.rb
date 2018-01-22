@@ -19,12 +19,12 @@ module Spark
         class << self
             def List(params = {})
                 out = Spark::Teams.new()
-                rsp = Spark::rest('GET','/teams',{:params => params})
-                if rsp.ok
-                    data = JSON.parse(rsp.body)
+                res = Spark::rest('GET','/teams',{:params => params})
+                if res.ok
+                    data = JSON.parse(res.body)
                     data['items'].each do |r|
-                        room = Spark::Team.new(r)
-                        out.push(room)
+                        team = Spark::Team.new(r)
+                        out.push(team)
                     end
                 end
                 out
