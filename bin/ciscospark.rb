@@ -5,19 +5,7 @@ $LOAD_PATH.push("/Users/robertlabrie/Documents/code/cisco-spark-ruby/lib")
 
 require 'cisco-spark-ruby'
 options = {}
-help = {
-    'root' => {
-        'room' => 'Operate on spark rooms',
-        'team' => 'spark teams'
-    },
-    'room' => {
-        'list' => 'list rooms which the authenticated user is a member of',
-        'create' => 'create a room',
-        'get' => 'show the details of a room',
-        'delete' => 'delete a room'
 
-    }
-}
 parser = OptionParser.new do |opts|
     opts.on('-h','--help', 'Show Help') do
         options[:help] = 'root'
@@ -36,9 +24,17 @@ parser = OptionParser.new do |opts|
         subcommand.subcommand 'get' do |action|
             options[:action] = 'get'
             action.on('-h','--help','Show help') { |o| options[:help] = 'people-get'}
-            action.on('-i', '--id id','id') do |o|
-               options[:id] = o 
-            end
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'get'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'people-delete'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'get'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'people-create'}
+            action.on('-e','--email email','ID') { |o| options[:email] = o}
         end
         subcommand.subcommand 'update' do |action|
             options[:action] = 'update'
@@ -162,5 +158,12 @@ when 'people'
         [:emails, :displayName, :firstName, :lastName, :avatar, :orgId, :roles, :licenses].each { |k| payload[k] = options[k] if options[k] }
         person = Spark::Person::Get(options[:id])
         person.update(payload)
+    when 'create'
+        raise "Specify one or more email addresses with --email" unless options[:email]
+        person = Spark::Person::Create(options[:email])
+    when 'delete'
+        raise "Specify person ID with --id" unless options[:id]
+        person = Spark::Person::Get(options[:id])
+        person.delete()
     end
 end

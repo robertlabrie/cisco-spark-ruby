@@ -19,7 +19,7 @@ module Spark
             data.each {|k,v| public_send("#{k}=",v)}
         end
         def delete()
-            res = Spark::Read('DELETE',"/people/#{@id}")
+            res = Spark::Rest('DELETE',"/people/#{@id}")
         end
         def [](key)
             return nil unless respond_to?(key)
