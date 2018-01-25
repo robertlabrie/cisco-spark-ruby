@@ -3,6 +3,7 @@ module Spark
         attr_accessor :id, :roomId, :personId, :personEmail, :personDisplayName, :personOrgId, :isModerator, :isMonitor, :created
         def initialize(data)
             @api_endpoint = 'memberships'
+            @update_fields = [:isModerator]
             super
         end
         class << self

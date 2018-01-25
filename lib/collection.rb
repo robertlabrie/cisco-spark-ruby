@@ -1,5 +1,5 @@
 module Spark
-    class Memberships
+    class Collection
         attr_accessor 'items'
         def initialize(items = [])
             # we can broke no delay

@@ -1,21 +1,5 @@
 module Spark
-    class Teams
-        attr_accessor 'teams'
-        def initialize(teams = [])
-            @teams = teams
-        end
-        def push(room)
-            @teams.push(room)
-        end
-        def [](key)
-            @teams[key]
-        end
-        def to_s
-            "#{@teams}"
-        end
-        def each
-            @teams.each { |r| yield r }
-        end
+    class Teams < Collection
         class << self
             def List(params = {})
                 out = Spark::Teams.new()

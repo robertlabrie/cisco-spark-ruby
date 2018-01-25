@@ -1,19 +1,10 @@
 module Spark
-    class Team
+    class Team < Base
         attr_accessor :id, :name, :creatorId, :created
         def initialize(data)
-            data.each {|k,v| public_send("#{k}=",v)}
-        end
-        def update(payload={})
-            res = Spark::Rest('PUT',"/teams/#{@id}", {:payload => payload})
-            return res.ok
-        end
-        def set_name(name)
-            return self.update({:name => name})
-        end
-        def [](key)
-            return nil unless respond_to?(key)
-            public_send(key)
+            @api_endpoint = 'teams'
+            @update_fields = [:name]
+            super
         end
         class << self
             def Get(id)

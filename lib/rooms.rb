@@ -1,21 +1,5 @@
 module Spark
-    class Rooms
-        attr_accessor 'rooms'
-        def initialize(rooms = [])
-            @rooms = rooms
-        end
-        def push(room)
-            @rooms.push(room)
-        end
-        def [](key)
-            @rooms[key]
-        end
-        def to_s
-            "#{@rooms}"
-        end
-        def each
-            @rooms.each { |r| yield r }
-        end
+    class Rooms < Spark::Collection
         class << self
             def List(params = {})
                 out = Spark::Rooms.new()

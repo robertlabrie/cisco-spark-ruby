@@ -1,29 +1,10 @@
 module Spark
-    class Person
+    class Person < Base
         attr_accessor :id, :emails, :displayName, :nickName, :firstName, :lastName, :avatar, :orgId, :created, :lastActivity, :status, :type
         def initialize(data)
-            self.refresh(data)
-        end
-        def update(data={})
-            data.each {|k,v| public_send("#{k}=",v)}
-            payload = {}
-            [:emails, :displayName, :firstName, :lastName, :avatar, :orgId, :roles, :licenses].each { |k| payload[k] = self[k] }
-            res = Spark::rest('PUT',"/people/#{@id}", {:payload => payload})
-            if res.ok
-                self.refresh(JSON.parse(res.body))
-                return true
-            end
-            return false
-        end
-        def refresh(data)
-            data.each {|k,v| public_send("#{k}=",v)}
-        end
-        def delete()
-            res = Spark::Rest('DELETE',"/people/#{@id}")
-        end
-        def [](key)
-            return nil unless respond_to?(key)
-            public_send(key)
+            @api_endpoint = 'people'
+            @update_fields = [:emails, :displayName, :firstName, :lastName, :avatar, :orgId, :roles, :licenses]
+            super
         end
         class << self
             def Get(id)

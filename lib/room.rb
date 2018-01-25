@@ -1,24 +1,12 @@
 module Spark
-    class Room
+    class Room < Base
         attr_accessor :id, :title, :type, :isLocked, :lastActivity, :creatorId, :created, :teamId, :sipAddress
-        def [](key)
-            return nil unless respond_to?(key)
-            public_send(key)
-        end
         def initialize(data)
-            data.each {|k,v| public_send("#{k}=",v)}
+            @api_endpoint = 'rooms'
+            @update_fields = [:title]
+            super
         end
-        def update(payload={})
-            res = Spark::rest('PUT',"/rooms/#{@id}", {:payload => payload})            
-            return res.ok
-        end
-        def set_title(title)
-            return self.update({:title => title})
-        end
-        def delete()
-            res = Spark::rest('DELETE',"/rooms/#{@id}")
-            return res.ok
-        end
+
         class << self
             def Get(id)
                 res = Spark::rest('GET',"/rooms/#{id}")

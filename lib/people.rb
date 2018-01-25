@@ -1,21 +1,5 @@
 module Spark
-    class People
-        attr_accessor 'people'
-        def initialize(people = [])
-            @people = people
-        end
-        def push(person)
-            @people.push(person)
-        end
-        def [](key)
-            @people[key]
-        end
-        def to_s
-            "#{@people}"
-        end
-        def each
-            @people.each { |r| yield r }
-        end
+    class People < Collection
         class << self
             def List(params = {})
                 out = Spark::People.new()

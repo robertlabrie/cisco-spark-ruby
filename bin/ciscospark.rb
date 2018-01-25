@@ -142,7 +142,8 @@ when 'room'
         raise "Specify room ID with --id" unless options[:id]
         raise "Creating a room must specify a title" unless options[:title]
         room = Spark::Room::Get(options[:id])
-        room.set_title(options[:title])
+        room.title = options[:title]
+        room.update()
     end
 when 'team'
     case options[:action]
