@@ -3,19 +3,25 @@ require 'rest-client'
 require 'logger'
 
 module Spark
+    autoload :Base, "base"
+    autoload :Collection, "collection"
+
     autoload :Room, "room"
     autoload :Rooms, "rooms"
     autoload :Team, "team"
     autoload :Teams, "teams"
     autoload :Person, "person"
     autoload :People, "people"
+    autoload :Memberships, 'memberships'
+    autoload :Membership, 'membership'
     @@token = nil
     @@logger = nil
     class << self
         def Configure(_opts = {})
             @@token = _opts[:token] || ENV['SPARK_TOKEN']
             @@logger = Logger.new(STDOUT)
-            @@logger.level = Logger::FATAL
+            @@logger.level = Logger::INFO
+            # @@logger.level = Logger::FATAL
             case _opts[:loglevel]
                 when :debug
                     @@logger.level = Logger::DEBUG

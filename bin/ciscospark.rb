@@ -10,6 +10,21 @@ parser = OptionParser.new do |opts|
     opts.on('-h','--help', 'Show Help') do
         options[:help] = 'root'
     end
+    opts.subcommand 'membership' do |subcommand|
+        options[:entity] = 'membership'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = 'membership'}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-e','--personEmail personEmail','Email address') { |o| options[:personEmail] = o}
+            action.on('-r','--roomId roomId ','Display name') { |o| options[:roomId] = o}
+            action.on('-p','--personId personId','Person ID') { |o| options[:personId] = o}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'membership-get'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+    end
     opts.subcommand 'people' do |subcommand|
         options[:entity] = 'people'
         subcommand.on('-h','--help','Show help') { |o| options[:help] = 'people'}
@@ -165,5 +180,18 @@ when 'people'
         raise "Specify person ID with --id" unless options[:id]
         person = Spark::Person::Get(options[:id])
         person.delete()
+    end
+when 'membership'
+    case options[:action]
+    when 'list'
+        params = {}
+        [:personEmail, :roomId, :personId].each { |k| params[k] = options[k] if options[k] }
+        raise "-personEmail, -roomId or -personId must be specified" if params.empty?
+        memberships = Spark::Memberships::List(params)
+        memberships.each { |m| printf "%-80s %-80s %-80s %s\n", m.id, m.roomId, m.personId, m.personEmail}
+    when 'get'
+        raise "Specify membership ID with --id" unless options[:id]
+        membership = Spark::Membership::Get(options[:id])
+        membership.instance_variables.each { |k| printf "%-25s %s\n", k,membership[k.to_s.sub('@','')] }
     end
 end

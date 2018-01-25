@@ -1,6 +1,6 @@
 module Spark
     class People
-        attr_accessor 'People'
+        attr_accessor 'people'
         def initialize(people = [])
             @people = people
         end
