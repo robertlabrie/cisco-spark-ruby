@@ -24,6 +24,15 @@ parser = OptionParser.new do |opts|
             action.on('-h','--help','Show help') { |o| options[:help] = 'membership-get'}
             action.on('-i','--id id','ID') { |o| options[:id] = o}
         end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'get'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'membership-create'}
+            action.on('-r','--roomId roomId','The room ID') { |o| options[:roomId] = o}
+            action.on('-p','--personId personId','The person ID') { |o| options[:personId] = o}
+            action.on('-e','--personEmail personEmail','The email address of the person') { |o| options[:personEmail] = o}
+            action.on('-m','--isModerator isModerator','Set true to make the person a moderator') { |o| options[:isModerator] = o}
+        end
+
     end
     opts.subcommand 'people' do |subcommand|
         options[:entity] = 'people'
@@ -31,9 +40,9 @@ parser = OptionParser.new do |opts|
         subcommand.subcommand 'list' do |action|
             options[:action] = 'list'
             action.on('-e','--email email','Email address') { |o| options[:email] = o}
-            action.on('-d','--disaplyname displayName ','Display name') { |o| options[:displayName] = o}
+            action.on('-d','--displayName displayName ','Display name') { |o| options[:displayName] = o}
             action.on('-i','--id id','ID') { |o| options[:id] = o}
-            action.on('-o','--orgid orgId','orgid') { |o| options[:orgId] = o}
+            action.on('-o','--orgId orgId','orgid') { |o| options[:orgId] = o}
 
         end
         subcommand.subcommand 'get' do |action|
@@ -56,11 +65,11 @@ parser = OptionParser.new do |opts|
             action.on('-h','--help','Show help') { |o| options[:help] = 'people-update'}
             action.on('-i','--id id','ID') { |o| options[:id] = o}
             action.on('-e','--email email','email') { |o| options[:email] = o}
-            action.on('-d','--displayname displayName','Full name of the person') { |o| options[:displayName] = o}
-            action.on('-f','--firstname firstName','First name of the person') { |o| options[:firstName] = o}
-            action.on('-l','--lastname lastName','Last name of the person') { |o| options[:lastName] = o}
+            action.on('-d','--displayName displayName','Full name of the person') { |o| options[:displayName] = o}
+            action.on('-f','--firstName firstName','First name of the person') { |o| options[:firstName] = o}
+            action.on('-l','--lastName lastName','Last name of the person') { |o| options[:lastName] = o}
             action.on('-a','--avatar avatar','URL to persons avatar in PNG format') { |o| options[:avatar] = o}
-            action.on('-o','--orgid orgId','ID of the organization to which the person belongs') { |o| options[:orgId] = o}
+            action.on('-o','--orgId orgId','ID of the organization to which the person belongs') { |o| options[:orgId] = o}
             action.on('-r','--roles roles','Roles of the person') { |o| options[:roles] = o}
             action.on('-c','--licenses licenses','Licenses allocated to the person') { |o| options[:licenses] = o}
         end
@@ -193,6 +202,10 @@ when 'membership'
     when 'get'
         raise "Specify membership ID with --id" unless options[:id]
         membership = Spark::Membership::Get(options[:id])
+        membership.instance_variables.each { |k| printf "%-25s %s\n", k,membership[k.to_s.sub('@','')] }
+    when 'create'
+        raise "Specify room ID with --roomid" unless options[:roomId]
+        membership = Spark::Membership::Create(options[:id])
         membership.instance_variables.each { |k| printf "%-25s %s\n", k,membership[k.to_s.sub('@','')] }
     end
 end
