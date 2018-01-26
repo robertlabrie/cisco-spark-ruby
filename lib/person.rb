@@ -19,7 +19,7 @@ module Spark
                 payload[:email] = email
                 res = Spark::rest('POST',"/people", {:payload => payload})
                 if res.ok
-                    room = Spark::Person.new(JSON.parse(res.body))
+                    person = Spark::Person.new(JSON.parse(res.body))
                     return person
                 end
                 return nil
