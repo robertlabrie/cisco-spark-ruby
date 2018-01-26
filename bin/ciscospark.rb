@@ -10,6 +10,39 @@ parser = OptionParser.new do |opts|
     opts.on('-h','--help', 'Show Help') do
         options[:help] = 'root'
     end
+    opts.subcommand 'message' do |subcommand|
+        options[:entity] = 'message'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = 'message'}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-r','--roomId roomId ','List messages for a room, by ID') { |o| options[:roomId] = o}
+            action.on('-p','--mentionedPeople mentionedPeople','List messages where the caller is mentioned by specifying "me" or the caller personId') { |o| options[:mentionedPeople] = o}
+            action.on('-b','--before before ','List messages before a sent time in ISO8601 format') { |o| options[:before] = o}
+            action.on('-b','--beforeMessage beforeMessage ','List messages before a message, by ID') { |o| options[:beforeMessage] = o}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'message-get'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'message-delete'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'message-create'}
+            action.on('-r','--roomId roomId','The room ID') { |o| options[:roomId] = o}
+            action.on('-p','--toPersonId toPersonId','The ID of the recipient when sending a private 1:1 message') { |o| options[:toPersonId] = o}
+            action.on('-e','--toPersonEmail toPersonEmail','The ID of the recipient when sending a private 1:1 message') { |o| options[:toPersonEmail] = o}
+            action.on('-m','--markdown markdown','The message, in markdown format') { |o| options[:markdown] = o}
+            action.on('-t','--text text','The message, in text format') { |o| options[:text] = o}
+            action.on('-f','--files files','The public URL to a file to be posted in the room') { |o| options[:files] = o}
+        end
+
+    end
+
     opts.subcommand 'membership' do |subcommand|
         options[:entity] = 'membership'
         subcommand.on('-h','--help','Show help') { |o| options[:help] = 'membership'}
@@ -23,6 +56,17 @@ parser = OptionParser.new do |opts|
             options[:action] = 'get'
             action.on('-h','--help','Show help') { |o| options[:help] = 'membership-get'}
             action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'membership-delete'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'membership-update'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+            action.on('-m','--isModerator isModerator','Set true to make the person a moderator') { |o| options[:isModerator] = o}
         end
         subcommand.subcommand 'create' do |action|
             options[:action] = 'get'
@@ -205,7 +249,43 @@ when 'membership'
         membership.instance_variables.each { |k| printf "%-25s %s\n", k,membership[k.to_s.sub('@','')] }
     when 'create'
         raise "Specify room ID with --roomid" unless options[:roomId]
+        params = {}
+        [:personId, :personEmail, :isModerator].each { |k| params[k] = options[k] if options[k] }
         membership = Spark::Membership::Create(options[:id])
         membership.instance_variables.each { |k| printf "%-25s %s\n", k,membership[k.to_s.sub('@','')] }
+    when 'update'
+        raise "Specify membership ID with --id" unless options[:id]
+        payload = {}
+        [:isModerator].each { |k| payload[k] = options[k] if options[k] }
+        membership = Spark::Membership::Get(options[:id])
+        membership.update(payload)
+    when 'delete'
+        raise "Specify membership ID with --id" unless options[:id]
+        membership = Spark::Membership::Get(options[:id])
+        membership.delete()
     end
+when 'message'
+    case options[:action]
+    when 'list'
+        params = {}
+        [:before, :roomId, :mentionedPeople, :beforeMessage].each { |k| params[k] = options[k] if options[k] }
+        raise "--roomId must be specified" unless options[:roomId]
+        messages = Spark::Messages::List(params)
+        messages.each { |m| printf "%-80s %-28s %-30s %s\n", m.id, m.created, m.personEmail, m.text}
+    when 'get'
+        raise "Specify message ID with --id" unless options[:id]
+        message = Spark::Message::Get(options[:id])
+        message.instance_variables.each { |k| printf "%-25s %s\n", k,message[k.to_s.sub('@','')] }
+    when 'create'
+        raise "Specify room ID with --roomid" unless options[:roomId]
+        params = {}
+        [:toPersonId, :toPersonEmail, :text, :markdown, :files].each { |k| params[k] = options[k] if options[k] }
+        message = Spark::Message::Create(options[:roomId], params)
+        message.instance_variables.each { |k| printf "%-25s %s\n", k,message[k.to_s.sub('@','')] }
+    when 'delete'
+        raise "Specify message ID with --id" unless options[:id]
+        message = Spark::Message::Get(options[:id])
+        message.delete()
+    end
+    
 end
