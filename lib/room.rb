@@ -1,6 +1,6 @@
 module Spark
     class Room < Base
-        attr_accessor :id, :title, :type, :isLocked, :lastActivity, :creatorId, :created, :teamId, :sipAddress
+        attr_accessor :id, :title, :type, :isLocked, :lastActivity, :creatorId, :created, :teamId, :sipAddress, :errors
         def initialize(data)
             @api_endpoint = 'rooms'
             @update_fields = [:title]
