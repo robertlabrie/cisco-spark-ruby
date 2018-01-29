@@ -16,6 +16,8 @@ module Spark
     autoload :Membership, 'membership'
     autoload :Messages, 'messages'
     autoload :Message, 'message'
+    autoload :TeamMemberships, 'teammemberships'
+    autoload :TeamMembership, 'teammembership'
     @@token = nil
     @@logger = nil
     class << self
