@@ -42,6 +42,40 @@ parser = OptionParser.new do |opts|
         end
 
     end
+    opts.subcommand 'teammembership' do |subcommand|
+        options[:entity] = 'teammembership'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = 'teammembership'}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-t','--teamId teamId ','List team memberships for a team, by ID') { |o| options[:teamId] = o}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'teammembership-get'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'teammembership-update'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+            action.on('-m','--isModerator isModerator','Set true to make the person a moderator') { |o| options[:isModerator] = o}
+        end
+
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'teammembership-delete'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'teammembership-create'}
+            action.on('-t','--teamId teamId ','List team memberships for a team, by ID') { |o| options[:teamId] = o}
+            action.on('-p','--personId personId','The person ID') { |o| options[:personId] = o}
+            action.on('-e','--personEmail personEmail','The person email') { |o| options[:personEmail] = o}
+            action.on('-m','--isModerator isModerator','Set to true to make the person a moderator') { |o| options[:isModerator] = o}
+        end
+
+    end
 
     opts.subcommand 'membership' do |subcommand|
         options[:entity] = 'membership'
@@ -69,7 +103,7 @@ parser = OptionParser.new do |opts|
             action.on('-m','--isModerator isModerator','Set true to make the person a moderator') { |o| options[:isModerator] = o}
         end
         subcommand.subcommand 'create' do |action|
-            options[:action] = 'get'
+            options[:action] = 'create'
             action.on('-h','--help','Show help') { |o| options[:help] = 'membership-create'}
             action.on('-r','--roomId roomId','The room ID') { |o| options[:roomId] = o}
             action.on('-p','--personId personId','The person ID') { |o| options[:personId] = o}
@@ -251,7 +285,7 @@ when 'membership'
         raise "Specify room ID with --roomid" unless options[:roomId]
         params = {}
         [:personId, :personEmail, :isModerator].each { |k| params[k] = options[k] if options[k] }
-        membership = Spark::Membership::Create(options[:id])
+        membership = Spark::Membership::Create(options[:roomId],params)
         membership.instance_variables.each { |k| printf "%-25s %s\n", k,membership[k.to_s.sub('@','')] }
     when 'update'
         raise "Specify membership ID with --id" unless options[:id]
@@ -287,5 +321,34 @@ when 'message'
         message = Spark::Message::Get(options[:id])
         message.delete()
     end
-    
+when 'teammembership'
+    case options[:action]
+    when 'list'
+        params = {}
+        [:personEmail, :roomId, :personId].each { |k| params[k] = options[k] if options[k] }
+        raise "-personEmail, -roomId or -personId must be specified" if params.empty?
+        teammemberships = Spark::TeamMemberships::List(params)
+        teammemberships.each { |m| printf "%-80s %-80s %-80s %s\n", m.id, m.roomId, m.personId, m.personEmail}
+    when 'get'
+        raise "Specify teammembership ID with --id" unless options[:id]
+        teammembership = Spark::TeamMembership::Get(options[:id])
+        teammembership.instance_variables.each { |k| printf "%-25s %s\n", k,teammembership[k.to_s.sub('@','')] }
+    when 'create'
+        raise "Specify team ID with --teamId" unless options[:roomId]
+        params = {}
+        [:personId, :personEmail, :isModerator].each { |k| params[k] = options[k] if options[k] }
+        teammembership = Spark::TeamMembership::Create(options[:roomId],params)
+        membeteammembershiprship.instance_variables.each { |k| printf "%-25s %s\n", k,teammembership[k.to_s.sub('@','')] }
+    when 'update'
+        raise "Specify teammembership ID with --id" unless options[:id]
+        payload = {}
+        [:isModerator].each { |k| payload[k] = options[k] if options[k] }
+        teammembership = Spark::TeamMembership::Get(options[:id])
+        teammembership.update(payload)
+    when 'delete'
+        raise "Specify teammembership ID with --id" unless options[:id]
+        teammembership = Spark::TeamMembership::Get(options[:id])
+        teammembership.delete()
+    end
+        
 end
