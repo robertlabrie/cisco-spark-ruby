@@ -18,6 +18,8 @@ module Spark
     autoload :Message, 'message'
     autoload :TeamMemberships, 'teammemberships'
     autoload :TeamMembership, 'teammembership'
+    autoload :Webhooks, 'webhooks'
+    autoload :Webhook, 'webhook'
     @@token = nil
     @@logger = nil
     class << self

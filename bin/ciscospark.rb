@@ -5,10 +5,46 @@ $LOAD_PATH.push("/Users/robertlabrie/Documents/code/cisco-spark-ruby/lib")
 
 require 'cisco-spark-ruby'
 options = {}
-
 parser = OptionParser.new do |opts|
     opts.on('-h','--help', 'Show Help') do
         options[:help] = 'root'
+    end
+    opts.subcommand 'webhook' do |subcommand|
+        options[:entity] = 'webhook'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = 'webhook'}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'webhook-list'}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'webhook-get'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'webhook-delete'}
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'webhook-create'}
+            action.on('-n','--name name','A user-friendly name for the webhook.') { |o| options[:name] = o}
+            action.on('-u','--targetUrl targetUrl','The URL that receives POST requests for each event.') { |o| options[:targetUrl] = o}
+            action.on('-r','--resource resource','The resource type for the webhook. Creating a webhook requires read scope on the resource the webhook is for.') { |o| options[:resource] = o}
+            action.on('-e','--event event','The event type for the webhook.') { |o| options[:event] = o}
+            action.on('-f','--filter filter','The filter that defines the webhook scope.') { |o| options[:filter] = o}
+            action.on('-s','--secret secret','The secret used to generate payload signature.') { |o| options[:secret] = o}
+        end
+        subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-h','--help','Show help') { |o| options[:help] = 'webhook-update'}
+            action.on('-n','--name name','A user-friendly name for the webhook.') { |o| options[:name] = o}
+            action.on('-u','--targetUrl targetUrl','The URL that receives POST requests for each event.') { |o| options[:targetUrl] = o}
+            action.on('-s','--secret secret','The secret used to generate payload signature.') { |o| options[:secret] = o}
+            action.on('-t','--status status','The status of the webhook. Use active to reactivate a disabled webhook.') { |o| options[:status] = o}
+        end
+
     end
     opts.subcommand 'message' do |subcommand|
         options[:entity] = 'message'
@@ -351,4 +387,32 @@ when 'teammembership'
         teammembership.delete()
     end
         
+when 'webhook'
+    case options[:action]
+    when 'list'
+        params = {}
+        webhooks = Spark::Webhooks::List(params)
+        webhooks.each { |h| printf "%-80s %-20s %s\n", h.id, h.name, h.targetUrl}
+    when 'get'
+        raise "Specify webhook ID with --id" unless options[:id]
+        webhook = Spark::Webhook::Get(options[:id])
+        webhook.instance_variables.each { |k| printf "%-25s %s\n", k,webhook[k.to_s.sub('@','')] }
+    when 'create'
+        params = {}
+        [:name, :targetUrl, :resource, :event].each { |k| params[k] = options[k] if options[k] }
+        raise "Must specify --name, --targetUrl, --resource, --event" if params.empty?
+        [:filter, :secret].each { |k| params[k] = options[k] if options[k] }
+        webhook = Spark::Webhook::Create(options[:roomId],params)
+        webhook.instance_variables.each { |k| printf "%-25s %s\n", k,webhook[k.to_s.sub('@','')] }
+    when 'update'
+        raise "Specify webhook ID with --id" unless options[:id]
+        payload = {}
+        [:name, :targetUrl, :secret, :status].each { |k| payload[k] = options[k] if options[k] }
+        webhook = Spark::Webhook::Get(options[:id])
+        webhook.update(payload)
+    when 'delete'
+        raise "Specify webhook ID with --id" unless options[:id]
+        webhook = Spark::Webhook::Get(options[:id])
+        webhook.delete()
+    end
 end
