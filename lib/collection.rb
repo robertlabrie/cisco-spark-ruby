@@ -1,5 +1,6 @@
 module Spark
     class Collection
+        include Enumerable
         attr_accessor 'items'
         def initialize(items = [])
             # we can broke no delay
@@ -7,6 +8,9 @@ module Spark
         end
         def push(item)
             @items.push(item)
+        end
+        def length
+            @items.length
         end
         def [](key)
             @items[key]
@@ -19,4 +23,3 @@ module Spark
         end
     end
 end
-
