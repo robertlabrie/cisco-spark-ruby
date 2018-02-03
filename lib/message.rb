@@ -1,7 +1,7 @@
 module Spark
     class Message < Base
-        attr_accessor :id, :roomId, :roomType, :text, :personId, :personEmail,  :created, :markdown, :html, :mentionedPeople, :files
-        def initialize(data)
+        attr_accessor :id, :roomId, :roomType, :text, :personId, :personEmail,  :created, :markdown, :html, :mentionedPeople, :files, :toPersonId, :toPersonEmail
+        def initialize(data = {})
             @api_endpoint = 'messages'
             @update_fields = []
             super
@@ -15,8 +15,7 @@ module Spark
                 end
                 return nil
             end
-            def Create(roomId, payload={})
-                payload[:roomId] = roomId
+            def Create(payload={})
                 res = Spark::rest('POST',"/messages", {:payload => payload})
                 if res.ok
                     message = Spark::Message.new(JSON.parse(res.body))
