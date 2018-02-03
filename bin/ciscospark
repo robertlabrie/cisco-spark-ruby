@@ -1,0 +1,441 @@
+#!/usr/bin/env ruby
+
+require 'optparse/subcommand'
+# $LOAD_PATH.push("/Users/robertlabrie/Documents/code/cisco-spark-ruby/lib")
+
+require 'cisco-spark-ruby'
+options = {}
+parser = OptionParser.new do |opts|
+    opts.on('-h','--help', 'Show Help') do
+        options[:help] = "Available subcommands:\npeople\nrooms\nmemberships\nmessages\nteams\nteammemberships\nwebhooks"
+    end
+    opts.subcommand 'people' do |subcommand|
+        options[:entity] = 'people'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = "Available subcommands:\nlist\ncreate\nget\nupdate\ndelete"}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-e','--email email','List people with this email address. For non-admin requests, either this or displayName are required.') { |o| options[:email] = o}
+            action.on('-d','--displayName displayName ','List people whose name starts with this string. For non-admin requests, either this or email are required.') { |o| options[:displayName] = o}
+            action.on('-i','--id id','List people by ID. Accepts up to 85 person IDs separated by commas.') { |o| options[:id] = o}
+            action.on('-o','--orgId orgId','List people in this organization. Only admin users of another organization (such as partners) may use this parameter.') { |o| options[:orgId] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'get'
+            action.on('-e','--emails emails','Email addresses of the person') { |o| options[:emails] = o}
+            action.on('-d','--displayName displayName','Full name of the person') { |o| options[:displayName] = o}
+            action.on('-f','--firstName firstName','First name of the person') { |o| options[:firstName] = o}
+            action.on('-l','--lastName lastName','Last name of the person') { |o| options[:lastName] = o}
+            action.on('-a','--avatar avatar','URL to persons avatar in PNG format') { |o| options[:avatar] = o}
+            action.on('-o','--orgId orgId','ID of the organization to which the person belongs') { |o| options[:orgId] = o}
+            action.on('-r','--roles roles','Roles of the person') { |o| options[:roles] = o}
+            action.on('-c','--licenses licenses','Licenses allocated to the person') { |o| options[:licenses] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-i','--id id','personId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-i','--id id','personId') { |o| options[:id] = o}
+            action.on('-e','--emails emails','email') { |o| options[:emails] = o}
+            action.on('-d','--displayName displayName','Full name of the person') { |o| options[:displayName] = o}
+            action.on('-f','--firstName firstName','First name of the person') { |o| options[:firstName] = o}
+            action.on('-l','--lastName lastName','Last name of the person') { |o| options[:lastName] = o}
+            action.on('-a','--avatar avatar','URL to persons avatar in PNG format') { |o| options[:avatar] = o}
+            action.on('-o','--orgId orgId','ID of the organization to which the person belongs') { |o| options[:orgId] = o}
+            action.on('-r','--roles roles','Roles of the person') { |o| options[:roles] = o}
+            action.on('-c','--licenses licenses','Licenses allocated to the person') { |o| options[:licenses] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'get'
+            action.on('-i','--id id','personIdID') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+
+    end
+    opts.subcommand 'rooms' do |subcommand|
+        options[:entity] = 'rooms'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = "Available subcommands:\nlist\ncreate\nget\nupdate\ndelete"}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-i','--teamId teamId','Limit the rooms to those associated with a team, by ID.') { |o| options[:teamId] = o}
+            action.on('-t','--type type','direct returns all 1-to-1 rooms. group returns all group rooms.') { |o| options[:type] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-t', '--title title','A user-friendly name for the room.') { |o| options[:title] = o}
+            action.on('-i','--teamId teamId','The ID for the team with which this room is associated.') { |o| options[:teamId] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+         end
+         subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-i','--id id','roomId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+         subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-i','--id id','roomId') { |o| options[:id] = o}
+            action.on('-t', '--title title','A user-friendly name for the room.') { |o| options[:title] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+         end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-i','--id id','roomId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+    end
+    opts.subcommand 'memberships' do |subcommand|
+        options[:entity] = 'memberships'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = "Available subcommands:\nlist\ncreate\nget\nupdate\ndelete"}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-r','--roomId roomId ','Limit results to a specific room, by ID.') { |o| options[:roomId] = o}
+            action.on('-p','--personId personId','Limit results to a specific person, by ID.') { |o| options[:personId] = o}
+            action.on('-e','--personEmail personEmail','Limit results to a specific person, by email address.') { |o| options[:personEmail] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-r','--roomId roomId','The room ID') { |o| options[:roomId] = o}
+            action.on('-p','--personId personId','The person ID') { |o| options[:personId] = o}
+            action.on('-e','--personEmail personEmail','The email address of the person') { |o| options[:personEmail] = o}
+            action.on('-m','--isModerator isModerator','Set true to make the person a moderator') { |o| options[:isModerator] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-i','--id id','membershipId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-i','--id id','membershipId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-i','--id id','membershipId') { |o| options[:id] = o}
+            action.on('-m','--isModerator isModerator','Set true to make the person a moderator') { |o| options[:isModerator] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+    end
+    opts.subcommand 'messages' do |subcommand|
+        options[:entity] = 'messages'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = "Available subcommands:\nlist\ncreate\nget\delete"}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-r','--roomId roomId ','List messages for a room, by .') { |o| options[:roomId] = o}
+            action.on('-p','--mentionedPeople mentionedPeople','List messages where the caller is mentioned by specifying "me" or the caller personId') { |o| options[:mentionedPeople] = o}
+            action.on('-b','--before before ','List messages before a sent time in ISO8601 format') { |o| options[:before] = o}
+            action.on('-b','--beforeMessage beforeMessage ','List messages before a message, by ID') { |o| options[:beforeMessage] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-r','--roomId roomId','The room ID') { |o| options[:roomId] = o}
+            action.on('-p','--toPersonId toPersonId','The ID of the recipient when sending a private 1:1 message') { |o| options[:toPersonId] = o}
+            action.on('-e','--toPersonEmail toPersonEmail','The ID of the recipient when sending a private 1:1 message') { |o| options[:toPersonEmail] = o}
+            action.on('-t','--text text','The message, in plain text. If markdown is specified this parameter may be optionally used to provide alternate text for UI clients that do not support rich text.') { |o| options[:text] = o}
+            action.on('-m','--markdown markdown','The message, in markdown format') { |o| options[:markdown] = o}
+            action.on('-f','--files files','The public URL to a file to be posted in the room') { |o| options[:files] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+    end
+    opts.subcommand 'teams' do |subcommand|
+        options[:entity] = 'teams'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = "Available subcommands:\nlist\ncreate\nget\nupdate\ndelete"}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-n','--name name','A user-friendly name for the team.') { |o| options[:name] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-i','--id id','teamId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-i','--id id','teamId') { |o| options[:id] = o}
+            action.on('-n','--name name','A user-friendly name for the team.') { |o| options[:name] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-i','--id id','teamId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+    end
+    opts.subcommand 'teammemberships' do |subcommand|
+        options[:entity] = 'teammemberships'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = "Available subcommands:\nlist\ncreate\nget\nupdate\ndelete"}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-t','--teamId teamId ','List team memberships for a team, by ID') { |o| options[:teamId] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-t','--teamId teamId ','The team ID') { |o| options[:teamId] = o}
+            action.on('-p','--personId personId','The person ID') { |o| options[:personId] = o}
+            action.on('-e','--personEmail personEmail','The person email') { |o| options[:personEmail] = o}
+            action.on('-m','--isModerator isModerator','Set to true to make the person a moderator') { |o| options[:isModerator] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-i','--id id','teamMembershipId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-i','--id id','teamMembershipId') { |o| options[:id] = o}
+            action.on('-m','--isModerator isModerator','Set true to make the person a moderator') { |o| options[:isModerator] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-i','--id id','teamMembershipId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+    end
+    opts.subcommand 'webhooks' do |subcommand|
+        options[:entity] = 'webhooks'
+        subcommand.on('-h','--help','Show help') { |o| options[:help] = "Available subcommands:\nlist\ncreate\nget\nupdate\ndelete"}
+        subcommand.subcommand 'list' do |action|
+            options[:action] = 'list'
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'create' do |action|
+            options[:action] = 'create'
+            action.on('-n','--name name','A user-friendly name for the webhook.') { |o| options[:name] = o}
+            action.on('-u','--targetUrl targetUrl','The URL that receives POST requests for each event.') { |o| options[:targetUrl] = o}
+            action.on('-r','--resource resource','The resource type for the webhook. Creating a webhook requires read scope on the resource the webhook is for.') { |o| options[:resource] = o}
+            action.on('-e','--event event','The event type for the webhook.') { |o| options[:event] = o}
+            action.on('-f','--filter filter','The filter that defines the webhook scope.') { |o| options[:filter] = o}
+            action.on('-s','--secret secret','The secret used to generate payload signature.') { |o| options[:secret] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'get' do |action|
+            options[:action] = 'get'
+            action.on('-i','--id id','ID') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'update' do |action|
+            options[:action] = 'update'
+            action.on('-n','--name name','A user-friendly name for the webhook.') { |o| options[:name] = o}
+            action.on('-u','--targetUrl targetUrl','The URL that receives POST requests for each event.') { |o| options[:targetUrl] = o}
+            action.on('-s','--secret secret','The secret used to generate payload signature.') { |o| options[:secret] = o}
+            action.on('-t','--status status','The status of the webhook. Use active to reactivate a disabled webhook.') { |o| options[:status] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+        subcommand.subcommand 'delete' do |action|
+            options[:action] = 'delete'
+            action.on('-i','--id id','webhookId') { |o| options[:id] = o}
+            action.on('-h','--help','Show help') { |o| options[:help] = action}
+        end
+    end
+end
+parser.parse!
+
+if options[:help]
+    puts "#{options[:help]}"
+    exit 0
+end
+# puts "options=#{options}"
+Spark::Configure()
+case options[:entity]
+when 'people'
+    case options[:action]
+    when 'list'
+        params = {}
+        [:email, :displayName, :id, :orgId].each { |k| params[k] = options[k] if options[k] }
+        raise "Must specify -id, -disaplyname or -email must be specified" if params.empty?
+        people = Spark::People::List(params)
+        people.each { |p| printf "%-80s %-25s %s\n", p.id, p.displayName, p.emails}
+    when 'get'
+        raise "Specify person ID with --id" unless options[:id]
+        person = Spark::Person::Get(options[:id])
+        person.instance_variables.each { |k| printf "%-25s %s\n", k,person[k.to_s.sub('@','')] }
+    when 'update'
+        raise "Specify person ID with --id" unless options[:id]
+        payload = {}
+        [:emails, :displayName, :firstName, :lastName, :avatar, :orgId, :roles, :licenses].each { |k| payload[k] = options[k] if options[k] }
+        person = Spark::Person::Get(options[:id])
+        person.update(payload)
+    when 'create'
+        raise "Specify one or more email addresses with --email" unless options[:email]
+        person = Spark::Person::Create(options[:email])
+    when 'delete'
+        raise "Specify person ID with --id" unless options[:id]
+        person = Spark::Person::Get(options[:id])
+        person.delete()
+    end
+when 'rooms'
+    case options[:action]
+    when 'list'
+        params = {}
+        [:teamId, :type].each { |k| params[k] = options[k] if options[k] }
+        rooms = Spark::Rooms::List(params)
+        rooms.each { |r| printf "%-80s %s\n", r.id, r.title }
+    when 'get'
+        raise "Specify room ID with --id" unless options[:id]
+        room = Spark::Room::Get(options[:id])
+        room.instance_variables.each { |k| printf "%-25s %s\n", k,room[k.to_s.sub('@','')] }
+    when 'delete'
+        raise "Specify room ID with --id" unless options[:id]
+        room = Spark::Room::Get(options[:id])
+        room.delete()
+    when 'create'
+        teamid = options[:teamid] || nil
+        raise "Creating a room must specify a title" unless options[:title]
+        room = Spark::Room::Create(options[:title], teamid)
+    when 'update'
+        raise "Specify room ID with --id" unless options[:id]
+        raise "Creating a room must specify a title" unless options[:title]
+        room = Spark::Room::Get(options[:id])
+        room.title = options[:title]
+        room.update()
+    end
+when 'membership'
+    case options[:action]
+    when 'list'
+        params = {}
+        [:personEmail, :roomId, :personId].each { |k| params[k] = options[k] if options[k] }
+        raise "-personEmail, -roomId or -personId must be specified" if params.empty?
+        memberships = Spark::Memberships::List(params)
+        memberships.each { |m| printf "%-80s %-80s %-80s %s\n", m.id, m.roomId, m.personId, m.personEmail}
+    when 'get'
+        raise "Specify membership ID with --id" unless options[:id]
+        membership = Spark::Membership::Get(options[:id])
+        membership.instance_variables.each { |k| printf "%-25s %s\n", k,membership[k.to_s.sub('@','')] }
+    when 'create'
+        raise "Specify room ID with --roomid" unless options[:roomId]
+        params = {}
+        [:personId, :personEmail, :isModerator].each { |k| params[k] = options[k] if options[k] }
+        membership = Spark::Membership::Create(options[:roomId],params)
+        membership.instance_variables.each { |k| printf "%-25s %s\n", k,membership[k.to_s.sub('@','')] }
+    when 'update'
+        raise "Specify membership ID with --id" unless options[:id]
+        payload = {}
+        [:isModerator].each { |k| payload[k] = options[k] if options[k] }
+        membership = Spark::Membership::Get(options[:id])
+        membership.update(payload)
+    when 'delete'
+        raise "Specify membership ID with --id" unless options[:id]
+        membership = Spark::Membership::Get(options[:id])
+        membership.delete()
+    end
+when 'messages'
+    case options[:action]
+    when 'list'
+        params = {}
+        [:before, :roomId, :mentionedPeople, :beforeMessage].each { |k| params[k] = options[k] if options[k] }
+        raise "--roomId must be specified" unless options[:roomId]
+        messages = Spark::Messages::List(params)
+        messages.each { |m| printf "%-80s %-28s %-30s %s\n", m.id, m.created, m.personEmail, m.text}
+    when 'get'
+        raise "Specify message ID with --id" unless options[:id]
+        message = Spark::Message::Get(options[:id])
+        message.instance_variables.each { |k| printf "%-25s %s\n", k,message[k.to_s.sub('@','')] }
+    when 'create'
+        raise "Specify room ID with --roomid" unless options[:roomId]
+        params = {}
+        [:toPersonId, :toPersonEmail, :text, :markdown, :files].each { |k| params[k] = options[k] if options[k] }
+        message = Spark::Message::Create(options[:roomId], params)
+        message.instance_variables.each { |k| printf "%-25s %s\n", k,message[k.to_s.sub('@','')] }
+    when 'delete'
+        raise "Specify message ID with --id" unless options[:id]
+        message = Spark::Message::Get(options[:id])
+        message.delete()
+    end
+when 'teams'
+    case options[:action]
+    when 'list'
+        teams = Spark::Teams::List()
+        teams.each { |t| printf "%-80s %s\n", t.id, t.name }
+    when 'get'
+        raise "Specify team ID with --id" unless options[:id]
+        team = Spark::Team::Get(options[:id])
+        team.instance_variables.each { |k| printf "%-25s %s\n", k,team[k.to_s.sub('@','')] }
+    end
+    #TODO: create, update, delete
+when 'teammemberships'
+    case options[:action]
+    when 'list'
+        params = {}
+        [:personEmail, :roomId, :personId].each { |k| params[k] = options[k] if options[k] }
+        raise "-personEmail, -roomId or -personId must be specified" if params.empty?
+        teammemberships = Spark::TeamMemberships::List(params)
+        teammemberships.each { |m| printf "%-80s %-80s %-80s %s\n", m.id, m.roomId, m.personId, m.personEmail}
+    when 'get'
+        raise "Specify teammembership ID with --id" unless options[:id]
+        teammembership = Spark::TeamMembership::Get(options[:id])
+        teammembership.instance_variables.each { |k| printf "%-25s %s\n", k,teammembership[k.to_s.sub('@','')] }
+    when 'create'
+        raise "Specify team ID with --teamId" unless options[:roomId]
+        params = {}
+        [:personId, :personEmail, :isModerator].each { |k| params[k] = options[k] if options[k] }
+        teammembership = Spark::TeamMembership::Create(options[:roomId],params)
+        membeteammembershiprship.instance_variables.each { |k| printf "%-25s %s\n", k,teammembership[k.to_s.sub('@','')] }
+    when 'update'
+        raise "Specify teammembership ID with --id" unless options[:id]
+        payload = {}
+        [:isModerator].each { |k| payload[k] = options[k] if options[k] }
+        teammembership = Spark::TeamMembership::Get(options[:id])
+        teammembership.update(payload)
+    when 'delete'
+        raise "Specify teammembership ID with --id" unless options[:id]
+        teammembership = Spark::TeamMembership::Get(options[:id])
+        teammembership.delete()
+    end
+when 'webhooks'
+    case options[:action]
+    when 'list'
+        params = {}
+        webhooks = Spark::Webhooks::List(params)
+        webhooks.each { |h| printf "%-80s %-20s %s\n", h.id, h.name, h.targetUrl}
+    when 'get'
+        raise "Specify webhook ID with --id" unless options[:id]
+        webhook = Spark::Webhook::Get(options[:id])
+        webhook.instance_variables.each { |k| printf "%-25s %s\n", k,webhook[k.to_s.sub('@','')] }
+    when 'create'
+        params = {}
+        [:name, :targetUrl, :resource, :event].each { |k| params[k] = options[k] if options[k] }
+        raise "Must specify --name, --targetUrl, --resource, --event" if params.empty?
+        [:filter, :secret].each { |k| params[k] = options[k] if options[k] }
+        webhook = Spark::Webhook::Create(options[:roomId],params)
+        webhook.instance_variables.each { |k| printf "%-25s %s\n", k,webhook[k.to_s.sub('@','')] }
+    when 'update'
+        raise "Specify webhook ID with --id" unless options[:id]
+        payload = {}
+        [:name, :targetUrl, :secret, :status].each { |k| payload[k] = options[k] if options[k] }
+        webhook = Spark::Webhook::Get(options[:id])
+        webhook.update(payload)
+    when 'delete'
+        raise "Specify webhook ID with --id" unless options[:id]
+        webhook = Spark::Webhook::Get(options[:id])
+        webhook.delete()
+    end
+end
