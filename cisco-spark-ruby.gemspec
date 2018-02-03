@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name               = 'cisco-spark-ruby'
   s.version            = '0.0.2'
-  s.default_executable = "ciscospark"
+  s.default_executable = 'ciscospark'
 
   s.required_rubygems_version = Gem::Requirement.new('>= 0') if s.respond_to? :required_rubygems_version=
   s.authors = ['Robert Labrie']
@@ -11,7 +11,7 @@ Gem::Specification.new do |s|
   s.files = Dir['lib/*.rb'] + Dir['bin/*']
   # s.test_files = ["test/test_hola.rb"]
   # s.homepage = %q{http://rubygems.org/gems/hola}
-  s.require_paths = ['lib','bin']
+  s.require_paths = %w[lib bin]
   s.bindir = 'bin'
   s.executables = ['ciscospark']
   s.rubygems_version = '1.6.2'
