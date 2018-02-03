@@ -1,7 +1,7 @@
 module Spark
   class Webhooks < Collection
     class << self
-        def List(params = {})
+        def list(params = {})
           out = Spark::Webhooks.new
           res = Spark.rest('GET', '/webhooks', params: params)
           if res.ok

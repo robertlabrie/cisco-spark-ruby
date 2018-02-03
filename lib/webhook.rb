@@ -7,7 +7,7 @@ module Spark
       super
     end
     class << self
-        def Get(id)
+        def get(id)
           res = Spark.rest('GET', "/webhooks/#{id}")
           if res.ok
             webhook = Spark::Webhook.new(JSON.parse(res.body))
@@ -16,7 +16,7 @@ module Spark
           nil
         end
 
-        def Create(payload = {})
+        def create(payload = {})
           res = Spark.rest('POST', '/webhooks', payload: payload)
           if res.ok
             webhook = Spark::Webhook.new(JSON.parse(res.body))

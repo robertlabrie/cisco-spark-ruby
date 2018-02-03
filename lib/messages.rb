@@ -1,7 +1,7 @@
 module Spark
   class Messages < Collection
     class << self
-        def List(params = {})
+        def list(params = {})
           out = Spark::Messages.new
           res = Spark.rest('GET', '/messages', params: params)
           if res.ok

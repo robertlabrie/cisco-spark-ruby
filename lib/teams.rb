@@ -1,7 +1,7 @@
 module Spark
   class Teams < Collection
     class << self
-        def List(params = {})
+        def list(params = {})
           out = Spark::Teams.new
           res = Spark.rest('GET', '/teams', params: params)
           if res.ok

@@ -1,7 +1,7 @@
 module Spark
   class People < Collection
     class << self
-        def List(params = {})
+        def list(params = {})
           out = Spark::People.new
           res = Spark.rest('GET', '/people', params: params)
           if res.ok

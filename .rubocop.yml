@@ -1,4 +1,10 @@
 Metrics/LineLength:
-  Enabled: false
+  Enabled: false # use sensible line lengths, not ones tied to 80x25 terms from the mid '90s, come on
 Metrics/BlockLength:
   Enabled: false
+Style/Documentation:
+  Enabled: false  # temp disabled to help cleanup the rest of the mess
+Naming/VariableName:
+  Enabled: false  # CiscoSpark API is camelCase so that's what we're doing too - sorry
+Metrics/MethodLength:
+  Max: 40  # What fits in the vertical space of a modern editor is reasonable

@@ -20,14 +20,14 @@ module Spark
   autoload :TeamMembership, 'teammembership'
   autoload :Webhooks, 'webhooks'
   autoload :Webhook, 'webhook'
-  @@token = nil
-  @@logger = nil
+  @token = nil
+  @logger = nil
   class << self
-      def Configure(_opts = {})
-        @@token = _opts[:token] || ENV['SPARK_TOKEN']
-        @@logger = Logger.new(STDOUT)
-        @@logger.level = Logger::FATAL
-        case _opts[:loglevel]
+      def configure(opts = {})
+        @token = opts[:token] || ENV['SPARK_TOKEN']
+        @logger = Logger.new(STDOUT)
+        @logger.level = Logger::FATAL
+        case opts[:loglevel]
         when :debug
           @@logger.level = Logger::DEBUG
         when :error
@@ -43,6 +43,10 @@ module Spark
         end
       end
 
+      def logger
+        @@logger
+      end
+
       def token
         @@token
       end
@@ -51,7 +55,7 @@ module Spark
         { 'Content-type' => 'application/json; charset=utf-8', 'Authorization' => "Bearer #{@@token}" }
       end
 
-      def Log(message, level = :debug)
+      def log(message, level = :debug)
         case level
         when :debug
           @@logger.debug(message)
@@ -68,19 +72,19 @@ module Spark
         end
       end
 
-      def rest(method, uri_stub, _opts = {})
+      def rest(method, uri_stub, opts = {})
         url = "https://api.ciscospark.com/v1#{uri_stub}"
 
         # bolt on query string params if passed
-        if _opts[:params]
-          url = "#{url}?#{URI.encode_www_form(_opts[:params])}" unless _opts[:params].empty?
+        if opts[:params]
+          url = "#{url}?#{URI.encode_www_form(opts[:params])}" unless opts[:params].empty?
         end
-        Spark::Log("REST method=#{method} url=#{url} _opts=#{_opts}", :info)
+        Spark::Log("REST method=#{method} url=#{url} opts=#{opts}", :info)
         # assmeble the headers
         headers = Spark.headers
-        headers = headers.merge(_opts[:headers]) if _opts[:headers]
+        headers = headers.merge(opts[:headers]) if opts[:headers]
 
-        payload = _opts[:payload] || {}
+        payload = opts[:payload] || {}
 
         out = {}
         begin
@@ -107,10 +111,10 @@ module Spark
     attr_accessor 'code'
     attr_accessor 'body'
     attr_accessor 'object'
-    def initialize(_data = {})
-      @code = _data[:code]
-      @body = _data[:body]
-      @object = _data[:object]
+    def initialize(data = {})
+      @code = data[:code]
+      @body = data[:body]
+      @object = data[:object]
     end
 
     def to_s

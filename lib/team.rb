@@ -7,7 +7,7 @@ module Spark
       super
     end
     class << self
-        def Get(id)
+        def get(id)
           res = Spark.rest('GET', "/teams/#{id}")
           if res.ok
             team = Spark::Team.new(JSON.parse(res.body))

@@ -1,7 +1,7 @@
 module Spark
   class Memberships < Collection
     class << self
-        def List(params = {})
+        def list(params = {})
           out = Spark::Memberships.new
           res = Spark.rest('GET', '/memberships', params: params)
           if res.ok

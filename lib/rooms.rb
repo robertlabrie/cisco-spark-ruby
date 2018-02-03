@@ -1,7 +1,7 @@
 module Spark
   class Rooms < Spark::Collection
     class << self
-        def List(params = {})
+        def list(params = {})
           out = Spark::Rooms.new
           if params[:sortBy]
             valid = %w[id lastactivity created]

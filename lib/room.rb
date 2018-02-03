@@ -8,7 +8,7 @@ module Spark
     end
 
     class << self
-        def Get(id)
+        def get(id)
           res = Spark.rest('GET', "/rooms/#{id}")
           if res.ok
             room = Spark::Room.new(JSON.parse(res.body))
@@ -17,7 +17,7 @@ module Spark
           nil
         end
 
-        def Create(title, teamId = nil)
+        def create(title, teamId = nil)
           payload = {}
           payload[:title] = title
           payload[:teamId] = teamId if teamId

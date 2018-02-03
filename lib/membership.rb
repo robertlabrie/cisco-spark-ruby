@@ -8,7 +8,7 @@ module Spark
       super
     end
     class << self
-        def Get(id)
+        def get(id)
           res = Spark.rest('GET', "/memberships/#{id}")
           if res.ok
             membership = Spark::Membership.new(JSON.parse(res.body))
@@ -17,7 +17,7 @@ module Spark
           nil
         end
 
-        def Create(roomId, payload = {})
+        def create(roomId, payload = {})
           payload[:roomId] = roomId
           res = Spark.rest('POST', '/memberships', payload: payload)
           if res.ok
