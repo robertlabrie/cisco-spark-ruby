@@ -26,8 +26,7 @@ module Spark
         def Configure(_opts = {})
             @@token = _opts[:token] || ENV['SPARK_TOKEN']
             @@logger = Logger.new(STDOUT)
-            @@logger.level = Logger::INFO
-            # @@logger.level = Logger::FATAL
+            @@logger.level = Logger::FATAL
             case _opts[:loglevel]
                 when :debug
                     @@logger.level = Logger::DEBUG
