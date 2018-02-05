@@ -29,46 +29,49 @@ module Spark
         @logger.level = Logger::FATAL
         case opts[:loglevel]
         when :debug
-          @@logger.level = Logger::DEBUG
+          @logger.level = Logger::DEBUG
         when :error
-          @@logger.level = Logger::ERROR
+          @logger.level = Logger::ERROR
         when :info
-          @@logger.level = Logger::INFO
+          @logger.level = Logger::INFO
         when :fatal
-          @@logger.level = Logger::FATAL
+          @logger.level = Logger::FATAL
         when :warn
-          @@logger.level = Logger::WARN
+          @logger.level = Logger::WARN
         when :unknown
-          @@logger.level = Logger::UKNOWN
+          @logger.level = Logger::UKNOWN
         end
       end
 
       def logger
-        @@logger
+        @logger
       end
 
       def token
-        @@token
+        @token
       end
 
       def headers
-        { 'Content-type' => 'application/json; charset=utf-8', 'Authorization' => "Bearer #{@@token}" }
+        {
+          :content_type => :json,
+          :Authorization => "Bearer #{token}"
+        }
       end
 
       def log(message, level = :debug)
         case level
         when :debug
-          @@logger.debug(message)
+          logger.debug(message)
         when :error
-          @@logger.error(message)
+          logger.error(message)
         when :info
-          @@logger.info(message)
+          logger.info(message)
         when :fatal
-          @@logger.fatal(message)
+          logger.fatal(message)
         when :warn
-          @@logger.warn(message)
+          logger.warn(message)
         when :unknown
-          @@logger.unknown(message)
+          logger.unknown(message)
         end
       end
 
@@ -79,7 +82,7 @@ module Spark
         if opts[:params]
           url = "#{url}?#{URI.encode_www_form(opts[:params])}" unless opts[:params].empty?
         end
-        Spark::Log("REST method=#{method} url=#{url} opts=#{opts}", :info)
+        Spark::log("REST method=#{method} url=#{url} opts=#{opts}", :info)
         # assmeble the headers
         headers = Spark.headers
         headers = headers.merge(opts[:headers]) if opts[:headers]
@@ -91,8 +94,8 @@ module Spark
           rsp = RestClient::Request.execute(
             method: method,
             url: url,
-            payload: payload,
-            headers: headers
+            payload: payload.to_json,
+            headers: headers,
           )
           out[:code] = rsp.code
           out[:body] = rsp.body
@@ -102,8 +105,8 @@ module Spark
           out[:body] = e.http_body
           out[:object] = e
         end
-        Spark::Log("REST method=#{method} url=#{url} response=#{out[:code]}", :info)
-        Spark::Log("REST body=#{out[:body]}", :debug)
+        Spark::log("REST method=#{method} url=#{url} response=#{out[:code]}", :info)
+        Spark::log("REST body=#{out[:body]}", :debug)
         Spark::Response.new(out)
       end
   end
