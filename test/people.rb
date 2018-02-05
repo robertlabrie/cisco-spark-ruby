@@ -38,7 +38,7 @@ describe Spark::People do
     end
     context "create" do
         before do
-            @person = Spark::Person::create({
+            @person = Spark::Person::create(['john.andersen@example.com'], {
                     emails: ['john.andersen@example.com'],
                     displayName: 'John Andersen',
                     firstName: 'John',

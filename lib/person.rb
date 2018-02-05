@@ -18,7 +18,8 @@ module Spark
           nil
         end
 
-        def create(payload = {})
+        def create(emails, payload = {})
+          payload[:emails] = emails
           res = Spark.rest('POST', '/people', payload: payload)
           if res.ok
             person = Spark::Person.new(JSON.parse(res.body))
