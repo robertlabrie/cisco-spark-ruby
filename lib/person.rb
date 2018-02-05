@@ -1,6 +1,8 @@
 module Spark
   class Person < Base
-    attr_accessor :id, :emails, :displayName, :nickName, :firstName, :lastName, :avatar, :orgId, :created, :lastActivity, :status, :type
+    attr_accessor :id, :emails, :displayName, :nickName, :firstName, :lastName, 
+      :avatar, :orgId, :created, :lastActivity, :status, :type, :roles, :licenses,
+      :timezone, :invitePending, :loginEnabled
     def initialize(data)
       @api_endpoint = 'people'
       @update_fields = %i[emails displayName firstName lastName avatar orgId roles licenses]
@@ -16,8 +18,7 @@ module Spark
           nil
         end
 
-        def create(email, payload = {})
-          payload[:email] = email
+        def create(payload = {})
           res = Spark.rest('POST', '/people', payload: payload)
           if res.ok
             person = Spark::Person.new(JSON.parse(res.body))
