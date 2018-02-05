@@ -23,7 +23,8 @@ module Spark
     end
 
     def delete
-      Spark.rest('DELETE', "/#{@api_endpoint}/#{@id}")
+      res = Spark.rest('DELETE', "/#{@api_endpoint}/#{@id}")
+      res.ok
     end
 
     def [](key)
