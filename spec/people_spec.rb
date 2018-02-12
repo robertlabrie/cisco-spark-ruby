@@ -7,7 +7,7 @@ require 'rspec'
 require 'test/unit'
 require 'webmock'
 include WebMock::API
-p = Spark::People.new()
+
 WebMock.enable!
 Spark::configure()
 stub_request(:get, "https://api.ciscospark.com/v1/people").to_return(body: File.read('spec/data/people_list_response.json'), status: 200)
@@ -40,6 +40,7 @@ describe 'Spark::People' do
         it "is a person" do
             person = @people[0]
             expect(person.type).to eq('person')
+            expect(person.class.to_s).to eq('Spark::Person')
         end
     end
     context "create" do

@@ -17,10 +17,8 @@ module Spark
           nil
         end
 
-        def create(title, teamId = nil)
-          payload = {}
+        def create(title, payload = {})
           payload[:title] = title
-          payload[:teamId] = teamId if teamId
           res = Spark.rest('POST', '/rooms', payload: payload)
           if res.ok
             room = Spark::Room.new(JSON.parse(res.body))
