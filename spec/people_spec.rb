@@ -1,28 +1,32 @@
-$LOAD_PATH.push("./lib")
+require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+
+# $LOAD_PATH.push("./lib")
+require 'cisco-spark-ruby'
 
 require 'rspec'
 require 'test/unit'
 require 'webmock'
-require 'cisco-spark-ruby'
 include WebMock::API
-
+p = Spark::People.new()
 WebMock.enable!
 Spark::configure()
-stub_request(:get, "https://api.ciscospark.com/v1/people").to_return(body: File.read('test/data/people_list_response.json'), status: 200)
+stub_request(:get, "https://api.ciscospark.com/v1/people").to_return(body: File.read('spec/data/people_list_response.json'), status: 200)
 
 stub_request(:post, "https://api.ciscospark.com/v1/people").
-    with(body: File.read('test/data/people_create_request.json').strip).
-    to_return(status: 200, body: File.read('test/data/people_create_response.json'), headers: {})
+    with(body: File.read('spec/data/people_create_request.json').strip).
+    to_return(status: 200, body: File.read('spec/data/people_create_response.json'), headers: {})
 
-stub_request(:get, "https://api.ciscospark.com/v1/people/Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY").to_return(body: File.read('test/data/people_get_response.json'), status: 200)
+stub_request(:get, "https://api.ciscospark.com/v1/people/Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY").
+    to_return(body: File.read('spec/data/people_get_response.json'), status: 200)
 
 stub_request(:put, "https://api.ciscospark.com/v1/people/Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY").
-    with(body: File.read('test/data/people_update_request.json').strip).
-    to_return(status: 200, body: File.read('test/data/people_update_response.json'), headers: {})
+    with(body: File.read('spec/data/people_update_request.json').strip).
+    to_return(status: 200, body: File.read('spec/data/people_update_response.json'), headers: {})
 
-stub_request(:delete, "https://api.ciscospark.com/v1/people/Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY").to_return(body: '', status:204)
+stub_request(:delete, "https://api.ciscospark.com/v1/people/Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY").
+    to_return(body: '', status:204)
 
-describe Spark::People do
+describe 'Spark::People' do
     before(:all) do
 
     end
@@ -32,6 +36,8 @@ describe Spark::People do
         end
         it "list people" do
             expect(@people.length).to be 1
+        end
+        it "is a person" do
             person = @people[0]
             expect(person.type).to eq('person')
         end
@@ -63,7 +69,7 @@ describe Spark::People do
     end
     context "update" do
         before do
-            @person = Spark::Person.new(JSON.parse(File.read('test/data/people_update_response.json')))
+            @person = Spark::Person.new(JSON.parse(File.read('spec/data/people_update_response.json')))
             @person.displayName = 'John Anderson'
         end
         it "is wrong" do
