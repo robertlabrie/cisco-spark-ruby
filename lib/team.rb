@@ -15,6 +15,15 @@ module Spark
           end
           nil
         end
+        def create(name, payload = {})
+          payload[:name] = name
+          res = Spark.rest('POST', '/teams', payload: payload)
+          if res.ok
+            team = Spark::Team.new(JSON.parse(res.body))
+            return team
+          end
+          nil
+        end        
     end
   end
 end
