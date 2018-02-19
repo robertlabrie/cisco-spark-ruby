@@ -17,8 +17,8 @@ module Spark
           nil
         end
 
-        def create(roomId, payload = {})
-          payload[:roomId] = roomId
+        def create(teamId, payload = {})
+          payload[:teamId] = teamId
           res = Spark.rest('POST', '/team/memberships', payload: payload)
           if res.ok
             teammembership = Spark::TeamMembership.new(JSON.parse(res.body))
