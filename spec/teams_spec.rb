@@ -9,7 +9,7 @@ require 'webmock'
 include WebMock::API
 
 WebMock.enable!
-Spark::configure()
+CiscoSpark::configure()
 stub_request(:get, "https://api.ciscospark.com/v1/teams").to_return(body: File.read('spec/data/teams_list_response.json'), status: 200)
 
 stub_request(:post, "https://api.ciscospark.com/v1/teams").
@@ -26,13 +26,13 @@ stub_request(:put, "https://api.ciscospark.com/v1/teams/Y2lzY29zcGFyazovL3VzL1RF
 stub_request(:delete, "https://api.ciscospark.com/v1/teams/Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5").
     to_return(body: '', status:204)
 
-describe 'Spark::Teams' do
+describe 'CiscoSpark::Teams' do
     before(:all) do
 
     end
     context "list" do
         before do
-            @Teams = Spark::Teams::list()
+            @Teams = CiscoSpark::Teams::list()
         end
         it "list Teams" do
             expect(@Teams.length).to be 1
@@ -40,12 +40,12 @@ describe 'Spark::Teams' do
         it "is a team" do
             team = @Teams[0]
             expect(team.id).to eq('Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5')
-            expect(team.class.to_s).to eq('Spark::Team')
+            expect(team.class.to_s).to eq('CiscoSpark::Team')
         end
     end
     context "create" do
         before do
-            @team = Spark::Team::create('Build Squad')
+            @team = CiscoSpark::Team::create('Build Squad')
         end
         it "exists" do
             expect(@team.name).to eq('Build Squad')
@@ -53,7 +53,7 @@ describe 'Spark::Teams' do
     end
     context "get" do
         before do
-            @team = Spark::Team::get('Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5')
+            @team = CiscoSpark::Team::get('Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5')
         end
         it "exists" do
             expect(@team.id).to eq('Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5')
@@ -61,7 +61,7 @@ describe 'Spark::Teams' do
     end
     context "update" do
         before do
-            @team = Spark::Team.new(JSON.parse(File.read('spec/data/teams_update_response.json')))
+            @team = CiscoSpark::Team.new(JSON.parse(File.read('spec/data/teams_update_response.json')))
             @team.name = 'Mod Squad'
         end
         it "is wrong" do
@@ -77,7 +77,7 @@ describe 'Spark::Teams' do
     end
     context "delete" do
         before do
-            @team = Spark::Team.new({id: 'Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5'})
+            @team = CiscoSpark::Team.new({id: 'Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5'})
         end
         it "deleted" do
             res = @team.delete()

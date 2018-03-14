@@ -1,4 +1,4 @@
-module Spark
+module CiscoSpark
   class Team < Base
     attr_accessor :id, :name, :creatorId, :created
     def initialize(data)
@@ -8,18 +8,18 @@ module Spark
     end
     class << self
         def get(id)
-          res = Spark.rest('GET', "/teams/#{id}")
+          res = CiscoSpark.rest('GET', "/teams/#{id}")
           if res.ok
-            team = Spark::Team.new(JSON.parse(res.body))
+            team = CiscoSpark::Team.new(JSON.parse(res.body))
             return team
           end
           nil
         end
         def create(name, payload = {})
           payload[:name] = name
-          res = Spark.rest('POST', '/teams', payload: payload)
+          res = CiscoSpark.rest('POST', '/teams', payload: payload)
           if res.ok
-            team = Spark::Team.new(JSON.parse(res.body))
+            team = CiscoSpark::Team.new(JSON.parse(res.body))
             return team
           end
           nil

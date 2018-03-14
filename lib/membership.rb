@@ -1,4 +1,4 @@
-module Spark
+module CiscoSpark
   class Membership < Base
     attr_accessor :id, :roomId, :personId, :personEmail, :personDisplayName, :personOrgId, :isModerator, :isMonitor, :created
     def initialize(data)
@@ -9,9 +9,9 @@ module Spark
     end
     class << self
         def get(id)
-          res = Spark.rest('GET', "/memberships/#{id}")
+          res = CiscoSpark.rest('GET', "/memberships/#{id}")
           if res.ok
-            membership = Spark::Membership.new(JSON.parse(res.body))
+            membership = CiscoSpark::Membership.new(JSON.parse(res.body))
             return membership
           end
           nil
@@ -19,9 +19,9 @@ module Spark
 
         def create(roomId, payload = {})
           payload[:roomId] = roomId
-          res = Spark.rest('POST', '/memberships', payload: payload)
+          res = CiscoSpark.rest('POST', '/memberships', payload: payload)
           if res.ok
-            membership = Spark::Membership.new(JSON.parse(res.body))
+            membership = CiscoSpark::Membership.new(JSON.parse(res.body))
             return membership
           end
           nil

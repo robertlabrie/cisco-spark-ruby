@@ -260,6 +260,6 @@ if options[:help]
   exit 0
 end
 puts "the options are #{options}"
-Spark::configure()
-cli = Spark::CLI.new()
+CiscoSpark::configure()
+cli = CiscoSpark::CLI.new()
 cli.run(options)

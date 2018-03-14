@@ -1,4 +1,4 @@
-module Spark
+module CiscoSpark
   class Room < Base
     attr_accessor :id, :title, :type, :isLocked, :lastActivity, :creatorId, :created, :teamId, :sipAddress, :errors
     def initialize(data)
@@ -9,9 +9,9 @@ module Spark
 
     class << self
         def get(id)
-          res = Spark.rest('GET', "/rooms/#{id}")
+          res = CiscoSpark.rest('GET', "/rooms/#{id}")
           if res.ok
-            room = Spark::Room.new(JSON.parse(res.body))
+            room = CiscoSpark::Room.new(JSON.parse(res.body))
             return room
           end
           nil
@@ -19,9 +19,9 @@ module Spark
 
         def create(title, payload = {})
           payload[:title] = title
-          res = Spark.rest('POST', '/rooms', payload: payload)
+          res = CiscoSpark.rest('POST', '/rooms', payload: payload)
           if res.ok
-            room = Spark::Room.new(JSON.parse(res.body))
+            room = CiscoSpark::Room.new(JSON.parse(res.body))
             return room
           end
           nil

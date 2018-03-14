@@ -9,7 +9,7 @@ require 'webmock'
 include WebMock::API
 
 WebMock.enable!
-Spark::configure()
+CiscoSpark::configure()
 stub_request(:get, "https://api.ciscospark.com/v1/people").to_return(body: File.read('spec/data/people_list_response.json'), status: 200)
 
 stub_request(:post, "https://api.ciscospark.com/v1/people").
@@ -26,13 +26,13 @@ stub_request(:put, "https://api.ciscospark.com/v1/people/Y2lzY29zcGFyazovL3VzL1B
 stub_request(:delete, "https://api.ciscospark.com/v1/people/Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY").
     to_return(body: '', status:204)
 
-describe 'Spark::People' do
+describe 'CiscoSpark::People' do
     before(:all) do
 
     end
     context "list" do
         before do
-            @people = Spark::People::list()
+            @people = CiscoSpark::People::list()
         end
         it "list people" do
             expect(@people.length).to be 1
@@ -40,12 +40,12 @@ describe 'Spark::People' do
         it "is a person" do
             person = @people[0]
             expect(person.type).to eq('person')
-            expect(person.class.to_s).to eq('Spark::Person')
+            expect(person.class.to_s).to eq('CiscoSpark::Person')
         end
     end
     context "create" do
         before do
-            @person = Spark::Person::create(['john.andersen@example.com'], {
+            @person = CiscoSpark::Person::create(['john.andersen@example.com'], {
                     emails: ['john.andersen@example.com'],
                     displayName: 'John Andersen',
                     firstName: 'John',
@@ -62,7 +62,7 @@ describe 'Spark::People' do
     end
     context "get" do
         before do
-            @person = Spark::Person::get('Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY')
+            @person = CiscoSpark::Person::get('Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY')
         end
         it "exists" do
             expect(@person.id).to eq('Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY')
@@ -70,7 +70,7 @@ describe 'Spark::People' do
     end
     context "update" do
         before do
-            @person = Spark::Person.new(JSON.parse(File.read('spec/data/people_update_response.json')))
+            @person = CiscoSpark::Person.new(JSON.parse(File.read('spec/data/people_update_response.json')))
             @person.displayName = 'John Anderson'
         end
         it "is wrong" do
@@ -93,7 +93,7 @@ describe 'Spark::People' do
     end
     context "delete" do
         before do
-            @person = Spark::Person.new({id: 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY'})
+            @person = CiscoSpark::Person.new({id: 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY'})
         end
         it "deleted" do
             res = @person.delete()

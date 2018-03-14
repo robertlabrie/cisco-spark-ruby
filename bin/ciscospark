@@ -261,7 +261,7 @@ if options[:help]
   exit 0
 end
 # puts "options=#{options}"
-Spark::configure()
+CiscoSpark::configure()
 case options[:entity]
 when 'people'
   case options[:action]
@@ -269,24 +269,24 @@ when 'people'
     params = {}
     %i[email displayName id orgId].each { |k| params[k] = options[k] if options[k] }
     raise 'Must specify -id, -disaplyname or -email must be specified' if params.empty?
-    people = Spark::People::list(params)
+    people = CiscoSpark::People::list(params)
     people.each { |p| printf "%-80s %-25s %s\n", p.id, p.displayName, p.emails }
   when 'get'
     raise 'Specify person ID with --id' unless options[:id]
-    person = Spark::Person::get(options[:id])
+    person = CiscoSpark::Person::get(options[:id])
     person.instance_variables.each { |k| printf "%-25s %s\n", k, person[k.to_s.sub('@', '')] }
   when 'update'
     raise 'Specify person ID with --id' unless options[:id]
     payload = {}
     %i[emails displayName firstName lastName avatar orgId roles licenses].each { |k| payload[k] = options[k] if options[k] }
-    person = Spark::Person::get(options[:id])
+    person = CiscoSpark::Person::get(options[:id])
     person.update(payload)
   when 'create'
     raise 'Specify one or more email addresses with --email' unless options[:email]
-    person = Spark::Person::create(options[:email])
+    person = CiscoSpark::Person::create(options[:email])
   when 'delete'
     raise 'Specify person ID with --id' unless options[:id]
-    person = Spark::Person::get(options[:id])
+    person = CiscoSpark::Person::get(options[:id])
     person.delete
   end
 when 'rooms'
@@ -294,24 +294,24 @@ when 'rooms'
   when 'list'
     params = {}
     %i[teamId type].each { |k| params[k] = options[k] if options[k] }
-    rooms = Spark::Rooms::list(params)
+    rooms = CiscoSpark::Rooms::list(params)
     rooms.each { |r| printf "%-80s %s\n", r.id, r.title }
   when 'get'
     raise 'Specify room ID with --id' unless options[:id]
-    room = Spark::Room::get(options[:id])
+    room = CiscoSpark::Room::get(options[:id])
     room.instance_variables.each { |k| printf "%-25s %s\n", k, room[k.to_s.sub('@', '')] }
   when 'delete'
     raise 'Specify room ID with --id' unless options[:id]
-    room = Spark::Room::get(options[:id])
+    room = CiscoSpark::Room::get(options[:id])
     room.delete
   when 'create'
     teamid = options[:teamid] || nil
     raise 'Creating a room must specify a title' unless options[:title]
-    room = Spark::Room::create(options[:title], teamid)
+    room = CiscoSpark::Room::create(options[:title], teamid)
   when 'update'
     raise 'Specify room ID with --id' unless options[:id]
     raise 'Creating a room must specify a title' unless options[:title]
-    room = Spark::Room::get(options[:id])
+    room = CiscoSpark::Room::get(options[:id])
     room.title = options[:title]
     room.update
   end
@@ -321,27 +321,27 @@ when 'membership'
     params = {}
     %i[personEmail roomId personId].each { |k| params[k] = options[k] if options[k] }
     raise '-personEmail, -roomId or -personId must be specified' if params.empty?
-    memberships = Spark::Memberships::list(params)
+    memberships = CiscoSpark::Memberships::list(params)
     memberships.each { |m| printf "%-80s %-80s %-80s %s\n", m.id, m.roomId, m.personId, m.personEmail }
   when 'get'
     raise 'Specify membership ID with --id' unless options[:id]
-    membership = Spark::Membership::get(options[:id])
+    membership = CiscoSpark::Membership::get(options[:id])
     membership.instance_variables.each { |k| printf "%-25s %s\n", k, membership[k.to_s.sub('@', '')] }
   when 'create'
     raise 'Specify room ID with --roomid' unless options[:roomId]
     params = {}
     %i[personId personEmail isModerator].each { |k| params[k] = options[k] if options[k] }
-    membership = Spark::Membership::create(options[:roomId], params)
+    membership = CiscoSpark::Membership::create(options[:roomId], params)
     membership.instance_variables.each { |k| printf "%-25s %s\n", k, membership[k.to_s.sub('@', '')] }
   when 'update'
     raise 'Specify membership ID with --id' unless options[:id]
     payload = {}
     [:isModerator].each { |k| payload[k] = options[k] if options[k] }
-    membership = Spark::Membership::get(options[:id])
+    membership = CiscoSpark::Membership::get(options[:id])
     membership.update(payload)
   when 'delete'
     raise 'Specify membership ID with --id' unless options[:id]
-    membership = Spark::Membership::get(options[:id])
+    membership = CiscoSpark::Membership::get(options[:id])
     membership.delete
   end
 when 'messages'
@@ -350,31 +350,31 @@ when 'messages'
     params = {}
     %i[before roomId mentionedPeople beforeMessage].each { |k| params[k] = options[k] if options[k] }
     raise '--roomId must be specified' unless options[:roomId]
-    messages = Spark::Messages::list(params)
+    messages = CiscoSpark::Messages::list(params)
     messages.each { |m| printf "%-80s %-28s %-30s %s\n", m.id, m.created, m.personEmail, m.text }
   when 'get'
     raise 'Specify message ID with --id' unless options[:id]
-    message = Spark::Message::get(options[:id])
+    message = CiscoSpark::Message::get(options[:id])
     message.instance_variables.each { |k| printf "%-25s %s\n", k, message[k.to_s.sub('@', '')] }
   when 'create'
     raise 'Specify room ID with --roomid' unless options[:roomId]
     params = {}
     %i[toPersonId toPersonEmail text markdown files].each { |k| params[k] = options[k] if options[k] }
-    message = Spark::Message::create(options[:roomId], params)
+    message = CiscoSpark::Message::create(options[:roomId], params)
     message.instance_variables.each { |k| printf "%-25s %s\n", k, message[k.to_s.sub('@', '')] }
   when 'delete'
     raise 'Specify message ID with --id' unless options[:id]
-    message = Spark::Message::get(options[:id])
+    message = CiscoSpark::Message::get(options[:id])
     message.delete
   end
 when 'teams'
   case options[:action]
   when 'list'
-    teams = Spark::Teams::list()
+    teams = CiscoSpark::Teams::list()
     teams.each { |t| printf "%-80s %s\n", t.id, t.name }
   when 'get'
     raise 'Specify team ID with --id' unless options[:id]
-    team = Spark::Team::get(options[:id])
+    team = CiscoSpark::Team::get(options[:id])
     team.instance_variables.each { |k| printf "%-25s %s\n", k, team[k.to_s.sub('@', '')] }
   end
 # TODO: create, update, delete
@@ -384,55 +384,55 @@ when 'teammemberships'
     params = {}
     %i[personEmail roomId personId].each { |k| params[k] = options[k] if options[k] }
     raise '-personEmail, -roomId or -personId must be specified' if params.empty?
-    teammemberships = Spark::TeamMemberships::list(params)
+    teammemberships = CiscoSpark::TeamMemberships::list(params)
     teammemberships.each { |m| printf "%-80s %-80s %-80s %s\n", m.id, m.roomId, m.personId, m.personEmail }
   when 'get'
     raise 'Specify teammembership ID with --id' unless options[:id]
-    teammembership = Spark::TeamMembership::get(options[:id])
+    teammembership = CiscoSpark::TeamMembership::get(options[:id])
     teammembership.instance_variables.each { |k| printf "%-25s %s\n", k, teammembership[k.to_s.sub('@', '')] }
   when 'create'
     raise 'Specify team ID with --teamId' unless options[:roomId]
     params = {}
     %i[personId personEmail isModerator].each { |k| params[k] = options[k] if options[k] }
-    teammembership = Spark::TeamMembership::create(options[:roomId], params)
+    teammembership = CiscoSpark::TeamMembership::create(options[:roomId], params)
     membeteammembershiprship.instance_variables.each { |k| printf "%-25s %s\n", k, teammembership[k.to_s.sub('@', '')] }
   when 'update'
     raise 'Specify teammembership ID with --id' unless options[:id]
     payload = {}
     [:isModerator].each { |k| payload[k] = options[k] if options[k] }
-    teammembership = Spark::TeamMembership::get(options[:id])
+    teammembership = CiscoSpark::TeamMembership::get(options[:id])
     teammembership.update(payload)
   when 'delete'
     raise 'Specify teammembership ID with --id' unless options[:id]
-    teammembership = Spark::TeamMembership::get(options[:id])
+    teammembership = CiscoSpark::TeamMembership::get(options[:id])
     teammembership.delete
   end
 when 'webhooks'
   case options[:action]
   when 'list'
     params = {}
-    webhooks = Spark::Webhooks::list(params)
+    webhooks = CiscoSpark::Webhooks::list(params)
     webhooks.each { |h| printf "%-80s %-20s %s\n", h.id, h.name, h.targetUrl }
   when 'get'
     raise 'Specify webhook ID with --id' unless options[:id]
-    webhook = Spark::Webhook::get(options[:id])
+    webhook = CiscoSpark::Webhook::get(options[:id])
     webhook.instance_variables.each { |k| printf "%-25s %s\n", k, webhook[k.to_s.sub('@', '')] }
   when 'create'
     params = {}
     %i[name targetUrl resource event].each { |k| params[k] = options[k] if options[k] }
     raise 'Must specify --name, --targetUrl, --resource, --event' if params.empty?
     %i[filter secret].each { |k| params[k] = options[k] if options[k] }
-    webhook = Spark::Webhook::create(options[:roomId], params)
+    webhook = CiscoSpark::Webhook::create(options[:roomId], params)
     webhook.instance_variables.each { |k| printf "%-25s %s\n", k, webhook[k.to_s.sub('@', '')] }
   when 'update'
     raise 'Specify webhook ID with --id' unless options[:id]
     payload = {}
     %i[name targetUrl secret status].each { |k| payload[k] = options[k] if options[k] }
-    webhook = Spark::Webhook::get(options[:id])
+    webhook = CiscoSpark::Webhook::get(options[:id])
     webhook.update(payload)
   when 'delete'
     raise 'Specify webhook ID with --id' unless options[:id]
-    webhook = Spark::Webhook::get(options[:id])
+    webhook = CiscoSpark::Webhook::get(options[:id])
     webhook.delete
   end
 end

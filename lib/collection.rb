@@ -1,4 +1,4 @@
-module Spark
+module CiscoSpark
   class Collection
     include Enumerable
     attr_accessor 'items'

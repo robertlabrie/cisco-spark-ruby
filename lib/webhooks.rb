@@ -1,13 +1,13 @@
-module Spark
+module CiscoSpark
   class Webhooks < Collection
     class << self
         def list(params = {})
-          out = Spark::Webhooks.new
-          res = Spark.rest('GET', '/webhooks', params: params)
+          out = CiscoSpark::Webhooks.new
+          res = CiscoSpark.rest('GET', '/webhooks', params: params)
           if res.ok
             data = JSON.parse(res.body)
             data['items'].each do |r|
-              webhook = Spark::Webhook.new(r)
+              webhook = CiscoSpark::Webhook.new(r)
               out.push(webhook)
             end
           end

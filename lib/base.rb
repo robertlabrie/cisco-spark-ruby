@@ -1,4 +1,4 @@
-module Spark
+module CiscoSpark
   class Base
     @api_endpoint = nil
     @update_fileds = []
@@ -10,7 +10,7 @@ module Spark
       data.each { |k, v| public_send("#{k}=", v) }
       payload = {}
       @update_fields.each { |k| payload[k] = self[k] }
-      res = Spark.rest('PUT', "/#{@api_endpoint}/#{@id}", payload: payload)
+      res = CiscoSpark.rest('PUT', "/#{@api_endpoint}/#{@id}", payload: payload)
       if res.ok
         refresh(JSON.parse(res.body))
         return true
@@ -23,7 +23,7 @@ module Spark
     end
 
     def delete
-      res = Spark.rest('DELETE', "/#{@api_endpoint}/#{@id}")
+      res = CiscoSpark.rest('DELETE', "/#{@api_endpoint}/#{@id}")
       res.ok
     end
 

@@ -7,9 +7,9 @@ require 'rspec'
 require 'test/unit'
 require 'webmock'
 include WebMock::API
-p = Spark::Rooms.new()
+p = CiscoSpark::Rooms.new()
 WebMock.enable!
-Spark::configure()
+CiscoSpark::configure()
 stub_request(:get, "https://api.ciscospark.com/v1/rooms").to_return(body: File.read('spec/data/rooms_list_response.json'), status: 200)
 
 stub_request(:post, "https://api.ciscospark.com/v1/rooms").
@@ -26,13 +26,13 @@ stub_request(:put, "https://api.ciscospark.com/v1/rooms/Y2lzY29zcGFyazovL3VzL1JP
 stub_request(:delete, "https://api.ciscospark.com/v1/rooms/Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0").
     to_return(body: '', status:204)
 
-describe 'Spark::Rooms' do
+describe 'CiscoSpark::Rooms' do
     before(:all) do
 
     end
     context "list" do
         before do
-            @rooms = Spark::Rooms::list()
+            @rooms = CiscoSpark::Rooms::list()
         end
         it "list rooms" do
             expect(@rooms.length).to be 1
@@ -40,12 +40,12 @@ describe 'Spark::Rooms' do
         it "is a room" do
             room = @rooms[0]
             expect(room.title).to eq('Project Unicorn - Sprint 0')
-            expect(room.class.to_s).to eq('Spark::Room')
+            expect(room.class.to_s).to eq('CiscoSpark::Room')
         end
     end
     context "create" do
         before do
-            @room = Spark::Room::create('Project Unicorn - Sprint 0', {
+            @room = CiscoSpark::Room::create('Project Unicorn - Sprint 0', {
                 teamId: 'Y2lzY29zcGFyazovL3VzL1JPT00vNjRlNDVhZTAtYzQ2Yi0xMWU1LTlkZjktMGQ0MWUzNDIxOTcz'
                 })
         end
@@ -55,7 +55,7 @@ describe 'Spark::Rooms' do
     end
     context "get" do
         before do
-            @room = Spark::Room::get('Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0')
+            @room = CiscoSpark::Room::get('Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0')
         end
         it "exists" do
             expect(@room.id).to eq('Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0')
@@ -63,7 +63,7 @@ describe 'Spark::Rooms' do
     end
     context "update" do
         before do
-            @room = Spark::Room.new(JSON.parse(File.read('spec/data/rooms_update_response.json')))
+            @room = CiscoSpark::Room.new(JSON.parse(File.read('spec/data/rooms_update_response.json')))
             @room.title = 'Project Unicorn - Sprint 1'
         end
         it "is wrong" do
@@ -79,7 +79,7 @@ describe 'Spark::Rooms' do
     end
     context "delete" do
         before do
-            @room = Spark::Room.new({id: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0'})
+            @room = CiscoSpark::Room.new({id: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0'})
         end
         it "deleted" do
             res = @room.delete()

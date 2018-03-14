@@ -1,4 +1,4 @@
-module Spark
+module CiscoSpark
   class Person < Base
     attr_accessor :id, :emails, :displayName, :nickName, :firstName, :lastName, 
       :avatar, :orgId, :created, :lastActivity, :status, :type, :roles, :licenses,
@@ -10,9 +10,9 @@ module Spark
     end
     class << self
         def get(id)
-          res = Spark.rest('GET', "/people/#{id}")
+          res = CiscoSpark.rest('GET', "/people/#{id}")
           if res.ok
-            person = Spark::Person.new(JSON.parse(res.body))
+            person = CiscoSpark::Person.new(JSON.parse(res.body))
             return person
           end
           nil
@@ -20,9 +20,9 @@ module Spark
 
         def create(emails, payload = {})
           payload[:emails] = emails
-          res = Spark.rest('POST', '/people', payload: payload)
+          res = CiscoSpark.rest('POST', '/people', payload: payload)
           if res.ok
-            person = Spark::Person.new(JSON.parse(res.body))
+            person = CiscoSpark::Person.new(JSON.parse(res.body))
             return person
           end
           nil

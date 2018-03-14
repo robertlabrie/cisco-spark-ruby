@@ -2,7 +2,7 @@ gem 'rest-client', '>2.0.0'
 require 'rest-client'
 require 'logger'
 
-module Spark
+module CiscoSpark
   autoload :Base, 'base'
   autoload :Collection, 'collection'
 
@@ -84,9 +84,9 @@ module Spark
         if opts[:params]
           url = "#{url}?#{URI.encode_www_form(opts[:params])}" unless opts[:params].empty?
         end
-        Spark::log("REST method=#{method} url=#{url} opts=#{opts}", :info)
+        CiscoSpark::log("REST method=#{method} url=#{url} opts=#{opts}", :info)
         # assmeble the headers
-        headers = Spark.headers
+        headers = CiscoSpark.headers
         headers = headers.merge(opts[:headers]) if opts[:headers]
 
         payload = opts[:payload] || {}
@@ -107,9 +107,9 @@ module Spark
           out[:body] = e.http_body
           out[:object] = e
         end
-        Spark::log("REST method=#{method} url=#{url} response=#{out[:code]}", :info)
-        Spark::log("REST body=#{out[:body]}", :debug)
-        Spark::Response.new(out)
+        CiscoSpark::log("REST method=#{method} url=#{url} response=#{out[:code]}", :info)
+        CiscoSpark::log("REST body=#{out[:body]}", :debug)
+        CiscoSpark::Response.new(out)
       end
   end
   class Response

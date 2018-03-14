@@ -1,4 +1,4 @@
-module Spark
+module CiscoSpark
   class Webhook < Base
     attr_accessor :id, :name, :targetUrl, :resource, :event, :filter, :secret, :status, :created, :orgId, :createdBy, :appId, :ownedBy
     def initialize(data)
@@ -8,18 +8,18 @@ module Spark
     end
     class << self
         def get(id)
-          res = Spark.rest('GET', "/webhooks/#{id}")
+          res = CiscoSpark.rest('GET', "/webhooks/#{id}")
           if res.ok
-            webhook = Spark::Webhook.new(JSON.parse(res.body))
+            webhook = CiscoSpark::Webhook.new(JSON.parse(res.body))
             return webhook
           end
           nil
         end
 
         def create(payload = {})
-          res = Spark.rest('POST', '/webhooks', payload: payload)
+          res = CiscoSpark.rest('POST', '/webhooks', payload: payload)
           if res.ok
-            webhook = Spark::Webhook.new(JSON.parse(res.body))
+            webhook = CiscoSpark::Webhook.new(JSON.parse(res.body))
             return webhook
           end
           nil

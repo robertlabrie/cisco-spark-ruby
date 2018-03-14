@@ -9,7 +9,7 @@ require 'webmock'
 include WebMock::API
 
 WebMock.enable!
-Spark::configure()
+CiscoSpark::configure()
 stub_request(:get, "https://api.ciscospark.com/v1/team/memberships").to_return(body: File.read('spec/data/teammemberships_list_response.json'), status: 200)
 
 stub_request(:post, "https://api.ciscospark.com/v1/team/memberships").
@@ -26,13 +26,13 @@ stub_request(:put, "https://api.ciscospark.com/v1/team/memberships/Y2lzY29zcGFya
 stub_request(:delete, "https://api.ciscospark.com/v1/team/memberships/Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5").
     to_return(body: '', status:204)
 
-describe 'Spark::Teammemberships' do
+describe 'CiscoSpark::Teammemberships' do
     before(:all) do
 
     end
     context "list" do
         before do
-            @teammemberships = Spark::TeamMemberships::list()
+            @teammemberships = CiscoSpark::TeamMemberships::list()
         end
         it "list teammemberships" do
             expect(@teammemberships.length).to be 1
@@ -40,12 +40,12 @@ describe 'Spark::Teammemberships' do
         it "is a Teammembership" do
             teammembership = @teammemberships[0]
             expect(teammembership.personId).to eq('Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY')
-            expect(teammembership.class.to_s).to eq('Spark::TeamMembership')
+            expect(teammembership.class.to_s).to eq('CiscoSpark::TeamMembership')
         end
     end
     context "create" do
         before do
-            @teammembership = Spark::TeamMembership::create('Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5', {
+            @teammembership = CiscoSpark::TeamMembership::create('Y2lzY29zcGFyazovL3VzL1RFQU0vMTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5', {
                 personId: 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY',
                 personEmail: 'john.andersen@example.com',
                 isModerator: true
@@ -57,7 +57,7 @@ describe 'Spark::Teammemberships' do
     end
     context "get" do
         before do
-            @teammembership = Spark::TeamMembership::get('Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5')
+            @teammembership = CiscoSpark::TeamMembership::get('Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5')
         end
         it "exists" do
             expect(@teammembership.id).to eq('Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5')
@@ -65,7 +65,7 @@ describe 'Spark::Teammemberships' do
     end
     context "update" do
         before do
-            @teammembership = Spark::TeamMembership.new(JSON.parse(File.read('spec/data/teammemberships_update_response.json')))
+            @teammembership = CiscoSpark::TeamMembership.new(JSON.parse(File.read('spec/data/teammemberships_update_response.json')))
             @teammembership.isModerator = false
         end
         it "is wrong" do
@@ -81,7 +81,7 @@ describe 'Spark::Teammemberships' do
     end
     context "delete" do
         before do
-            @teammembership = Spark::TeamMembership.new({id: 'Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5'})
+            @teammembership = CiscoSpark::TeamMembership.new({id: 'Y2lzY29zcGFyazovL3VzL1RFQU1fTUVNQkVSU0hJUC8wZmNmYTJiOC1hZGNjLTQ1ZWEtYTc4Mi1lNDYwNTkyZjgxZWY6MTNlMThmNDAtNDJmYy0xMWU2LWE5ZDgtMjExYTBkYzc5NzY5'})
         end
         it "deleted" do
             res = @teammembership.delete()

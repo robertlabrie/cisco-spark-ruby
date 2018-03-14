@@ -9,7 +9,7 @@ require 'webmock'
 include WebMock::API
 
 WebMock.enable!
-Spark::configure()
+CiscoSpark::configure()
 stub_request(:get, "https://api.ciscospark.com/v1/messages").to_return(body: File.read('spec/data/messages_list_response.json'), status: 200)
 
 stub_request(:get, "https://api.ciscospark.com/v1/messages?roomId=Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0").to_return(body: File.read('spec/data/messages_list_response.json'), status: 200)
@@ -24,32 +24,32 @@ stub_request(:get, "https://api.ciscospark.com/v1/messages/Y2lzY29zcGFyazovL3VzL
 stub_request(:delete, "https://api.ciscospark.com/v1/messages/Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk").
     to_return(body: '', status:204)
 
-describe 'Spark::Messages' do
+describe 'CiscoSpark::Messages' do
     before(:all) do
 
     end
     context "cli" do
         it "fails if no action" do
             expect {
-                Spark::Messages::CLI({roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0'})
+                CiscoSpark::Messages::CLI({roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0'})
             }.to raise_error("action not specified or not one of list, get, create, delete")
         end
         it "lists messages in a room" do
-            out = Spark::Messages::CLI({action: 'list', roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0'})
+            out = CiscoSpark::Messages::CLI({action: 'list', roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0'})
             expect(out.length).to be 1
 
             expect {
-                Spark::Messages::CLI({action: 'list'})
+                CiscoSpark::Messages::CLI({action: 'list'})
             }.to raise_error("roomId must be specified")
         end
         it "get a specific message" do
-            message = Spark::Messages::CLI({action: 'get', id: 'Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk'})
+            message = CiscoSpark::Messages::CLI({action: 'get', id: 'Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk'})
             expect(message.id).to eq ('Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk')
         end
     end
     context "list" do
         before do
-            @Messages = Spark::Messages::list()
+            @Messages = CiscoSpark::Messages::list()
         end
         it "list Messages" do
             expect(@Messages.length).to be 1
@@ -57,12 +57,12 @@ describe 'Spark::Messages' do
         it "is a person" do
             message = @Messages[0]
             expect(message.personId).to eq('Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY')
-            expect(message.class.to_s).to eq('Spark::Message')
+            expect(message.class.to_s).to eq('CiscoSpark::Message')
         end
     end
     context "create" do
         before do
-            @message = Spark::Message::create({
+            @message = CiscoSpark::Message::create({
                 roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0',
                 toPersonId: 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mMDZkNzFhNS0wODMzLTRmYTUtYTcyYS1jYzg5YjI1ZWVlMmX',
                 toPersonEmail: 'julie@example.com',
@@ -77,7 +77,7 @@ describe 'Spark::Messages' do
     end
     context "get" do
         before do
-            @message = Spark::Message::get('Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk')
+            @message = CiscoSpark::Message::get('Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk')
         end
         it "exists" do
             expect(@message.id).to eq('Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk')
@@ -85,7 +85,7 @@ describe 'Spark::Messages' do
     end
     context "delete" do
         before do
-            @message = Spark::Message.new({id: 'Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk'})
+            @message = CiscoSpark::Message.new({id: 'Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk'})
         end
         it "deleted" do
             res = @message.delete()
