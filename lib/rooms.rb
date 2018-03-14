@@ -1,6 +1,9 @@
 module Spark
   class Rooms < Spark::Collection
     class << self
+        def CLI(options = {})
+
+        end
         def list(params = {})
           out = Spark::Rooms.new
           if params[:sortBy]

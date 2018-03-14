@@ -20,6 +20,7 @@ module Spark
   autoload :TeamMembership, 'teammembership'
   autoload :Webhooks, 'webhooks'
   autoload :Webhook, 'webhook'
+  autoload :CLI, 'cli'
   @token = nil
   @logger = nil
   class << self
@@ -27,6 +28,7 @@ module Spark
         @token = opts[:token] || ENV['SPARK_TOKEN']
         @logger = Logger.new(STDOUT)
         @logger.level = Logger::FATAL
+        # @logger.level = Logger::DEBUG
         case opts[:loglevel]
         when :debug
           @logger.level = Logger::DEBUG

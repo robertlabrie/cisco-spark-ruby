@@ -12,6 +12,8 @@ WebMock.enable!
 Spark::configure()
 stub_request(:get, "https://api.ciscospark.com/v1/messages").to_return(body: File.read('spec/data/messages_list_response.json'), status: 200)
 
+stub_request(:get, "https://api.ciscospark.com/v1/messages?roomId=Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0").to_return(body: File.read('spec/data/messages_list_response.json'), status: 200)
+
 stub_request(:post, "https://api.ciscospark.com/v1/messages").
     with(body: File.read('spec/data/messages_create_request.json').strip).
     to_return(status: 200, body: File.read('spec/data/messages_create_response.json'), headers: {})
@@ -25,6 +27,25 @@ stub_request(:delete, "https://api.ciscospark.com/v1/messages/Y2lzY29zcGFyazovL3
 describe 'Spark::Messages' do
     before(:all) do
 
+    end
+    context "cli" do
+        it "fails if no action" do
+            expect {
+                Spark::Messages::CLI({roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0'})
+            }.to raise_error("action not specified or not one of list, get, create, delete")
+        end
+        it "lists messages in a room" do
+            out = Spark::Messages::CLI({action: 'list', roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0'})
+            expect(out.length).to be 1
+
+            expect {
+                Spark::Messages::CLI({action: 'list'})
+            }.to raise_error("roomId must be specified")
+        end
+        it "get a specific message" do
+            message = Spark::Messages::CLI({action: 'get', id: 'Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk'})
+            expect(message.id).to eq ('Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk')
+        end
     end
     context "list" do
         before do
