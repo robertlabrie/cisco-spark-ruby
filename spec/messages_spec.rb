@@ -46,10 +46,29 @@ describe 'CiscoSpark::Messages' do
             message = CiscoSpark::Messages::CLI({action: 'get', id: 'Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk'})
             expect(message.id).to eq ('Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk')
         end
+        it "creates a message" do
+            @message = CiscoSpark::Messages::CLI({
+                action: 'create',
+                roomId: 'Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0',
+                toPersonId: 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mMDZkNzFhNS0wODMzLTRmYTUtYTcyYS1jYzg5YjI1ZWVlMmX',
+                toPersonEmail: 'julie@example.com',
+                text: 'PROJECT UPDATE - A new project plan has been published on Box: http://box.com/s/lf5vj. The PM for this project is Mike C. and the Engineering Manager is Jane W.',
+                markdown: '**PROJECT UPDATE** A new project plan has been published [on Box](http://box.com/s/lf5vj). The PM for this project is <@personEmail:mike@example.com> and the Engineering Manager is <@personEmail:jane@example.com>.',
+                files: [ "http://www.example.com/images/media.png" ]
+                })
+            expect(@message.roomType).to eq('group')
+        end
+        it "deletes a message" do
+            res = CiscoSpark::Messages::CLI({
+                action: 'delete',
+                id: 'Y2lzY29zcGFyazovL3VzL01FU1NBR0UvOTJkYjNiZTAtNDNiZC0xMWU2LThhZTktZGQ1YjNkZmM1NjVk'
+            })
+            expect(res).to be true
+        end
     end
     context "list" do
         before do
-            @Messages = CiscoSpark::Messages::list()
+            @Messages = CiscoSpark::Messages::list('Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0',{})
         end
         it "list Messages" do
             expect(@Messages.length).to be 1

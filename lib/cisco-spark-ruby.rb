@@ -24,6 +24,11 @@ module CiscoSpark
   @token = nil
   @logger = nil
   class << self
+      def clean_cli(opts = {})
+        opts.delete(:entity)
+        opts.delete(:action)
+        opts
+      end
       def configure(opts = {})
         @token = opts[:token] || ENV['SPARK_TOKEN']
         @logger = Logger.new(STDOUT)

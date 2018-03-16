@@ -15,7 +15,7 @@ module CiscoSpark
             else
                 raise "No valid entity specified. run ciscospark -h"
             end
-            puts rsp
+            return rsp
         end
     end
 end
