@@ -22,7 +22,13 @@ module CiscoSpark
     def to_s
       @items.to_s
     end
-
+    def to_h
+      hash = {}
+      hash['items'] = []
+      items.each { |i| hash['items'].push i.to_h }
+      # instance_variables.each {|var| hash[var.to_s.delete("@")] = instance_variable_get(var) }
+      hash
+    end
     def each
       @items.each { |r| yield r }
     end

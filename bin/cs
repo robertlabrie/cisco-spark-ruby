@@ -254,12 +254,13 @@ parser = OptionParser.new do |opts|
   end
 end
 parser.parse!
+# puts "the options are #{options}"
 
 if options[:help]
   puts options[:help].to_s
   exit 0
 end
-puts "the options are #{options}"
 CiscoSpark::configure()
 cli = CiscoSpark::CLI.new()
-cli.run(options)
+rsp = cli.run(options)
+puts JSON.pretty_generate(rsp.to_h)
