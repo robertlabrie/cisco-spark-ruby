@@ -30,6 +30,62 @@ describe 'CiscoSpark::People' do
     before(:all) do
 
     end
+    context "cli" do
+        it "fails if no action" do
+            expect {
+                CiscoSpark::People::CLI({})
+            }.to raise_error("action not specified or not one of list, get, create, delete, update")
+        end
+        it "lists people" do
+            people = CiscoSpark::People::CLI({
+                action: 'list'
+            })
+            expect(people.length).to be 1
+        end
+        it "gets a person" do
+            person = CiscoSpark::People::CLI({
+                action: 'get',
+                id: 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY'
+            })
+            expect(person.id).to eq('Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY')
+        end
+        it "creates a person" do
+            person = CiscoSpark::People::CLI({
+                action: 'create',
+                emails: ['john.andersen@example.com'],
+                displayName: 'John Andersen',
+                firstName: 'John',
+                lastName: 'Andersen',
+                avatar: "https://1efa7a94ed21783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~54c844c89e678e5a7b16a306bc2897b9~wx29yGtlTpilEFlYzqPKag==~1600",
+                orgId: "Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE",
+                roles: [ "Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh", "Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi" ],
+                licenses: [ "Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh", "Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi" ]                  
+            })
+            expect(person.id).to eq('Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY')
+        end
+        it "deletes a person" do
+            res = CiscoSpark::People::CLI({
+                action: 'delete',
+                id: 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY'
+            })
+            expect(res).to be true
+        end
+        it "updates a person" do
+            person = CiscoSpark::People::CLI({
+                action: 'update',
+                id: 'Y2lzY29zcGFyazovL3VzL1BFT1BMRS9mNWIzNjE4Ny1jOGRkLTQ3MjctOGIyZi1mOWM0NDdmMjkwNDY',
+                emails: [ "john.andersen@example.com" ],
+                displayName: "John Andersen",
+                firstName: "John",
+                lastName: "Andersen",
+                avatar: "https://1efa7a94ed21783e352-c62266528714497a17239ececf39e9e2.ssl.cf1.rackcdn.com/V1~54c844c89e678e5a7b16a306bc2897b9~wx29yGtlTpilEFlYzqPKag==~1600",
+                orgId: "Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi85NmFiYzJhYS0zZGNjLTExZTUtYTE1Mi1mZTM0ODE5Y2RjOWE",
+                roles: [ "Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh", "Y2lzY29zcGFyazovL3VzL1JPTEUvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi" ],
+                licenses: [ "Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWExNTItZmUzNDgxOWNkYzlh", "Y2lzY29zcGFyazovL3VzL0xJQ0VOU0UvOTZhYmMyYWEtM2RjYy0xMWU1LWIyNjMtMGY0NTkyYWRlZmFi" ]
+            })
+            expect(person.displayName).to eq('John Andersen')
+        end
+    end
     context "list" do
         before do
             @people = CiscoSpark::People::list()
